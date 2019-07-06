@@ -2,6 +2,7 @@
 #define __VEC_H__
 
 #include <cstring>
+#include <cmath>
 
 template <typename T, int dim>
 class Vec {
@@ -25,6 +26,9 @@ public:
 
     T operator* (const Vec<T, dim>& rhs) const; //Dot product
     Vec<T, dim> operator^ (const Vec<T, dim>& rhs) const; //Cross product
+
+    T length() const;
+    Vec<T, dim> normalize() const;
 };
 
 template <typename T, int dim>
@@ -105,8 +109,28 @@ T Vec<T, dim>::operator* (const Vec<T, dim>& rhs) const {
 
 template <typename T, int dim>
 Vec<T, dim> Vec<T, dim>::operator^ (const Vec<T, dim>& rhs) const {
-    //NOT IMPLEMENTED
+    if (dim != 3)
+        throw "NOT_IMPLEMENTED"; //Or not defined, I don't know...
+    return Vec<T, dim>(
+        data[1] * rhs.data[2] - data[2] * rhs.data[1],
+        data[2] * rhs.data[0] - data[0] * rhs.data[2],
+        data[0] * rhs.data[1] - data[1] * rhs.data[0]
+    );
 }
+
+template <typename T, int dim>
+T Vec<T, dim>::length() const {
+    T t = 0;
+    for (int i = 0; i < dim; i++)
+        t += data[i] * data[i];
+    return sqrt(t);
+}
+
+template <typename T, int dim>
+Vec<T, dim> Vec<T, dim>::normalize() const {
+    return Vec<T, dim>(*this) /= length();
+}
+
 
 typedef Vec<int, 2> Vec2i;
 typedef Vec<float, 2> Vec2f;
