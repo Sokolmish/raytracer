@@ -16,14 +16,14 @@ Image::~Image() {
     delete[] data;
 }
 
-void Image::setPixel(int x, int y, Vec3i color) {
-    data[(width * y + x) * 3 + 0] = (unsigned char) color[0];
-    data[(width * y + x) * 3 + 1] = (unsigned char) color[1];
-    data[(width * y + x) * 3 + 2] = (unsigned char) color[2];
+void Image::setPixel(int x, int y, Color color) {
+    data[(width * y + x) * 3 + 0] = (unsigned char) (color[0] > 255 ? 255 : color[0]);
+    data[(width * y + x) * 3 + 1] = (unsigned char) (color[1] > 255 ? 255 : color[1]);
+    data[(width * y + x) * 3 + 2] = (unsigned char) (color[2] > 255 ? 255 : color[2]);
 }
 
-Vec3i Image::getPixel(int x, int y) const {
-    Vec3i t;
+Color Image::getPixel(int x, int y) const {
+    Color t;
     t[0] = data[(width * y + x) * 3 + 0];
     t[1] = data[(width * y + x) * 3 + 1];
     t[2] = data[(width * y + x) * 3 + 2];

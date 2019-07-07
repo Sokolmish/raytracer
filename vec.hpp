@@ -111,7 +111,7 @@ Vec<T, dim> Vec<T, dim>::operator-() const {
 
 template <typename T, int dim>
 T Vec<T, dim>::operator* (const Vec<T, dim>& rhs) const {
-    int t = 0;
+    T t = 0;
     for (int i = 0; i < dim; i++)
         t += data[i] * rhs.data[i];
     return t;
@@ -150,5 +150,10 @@ Vec<U, D> operator* (U lhs, const Vec<U, D> &rhs) {
 typedef Vec<int, 3> Vec3i;
 typedef Vec<float, 3> Vec3f;
 typedef Vec<double, 3> Vec3d;
+
+typedef Vec<int, 4> Vec4i;
+typedef Vec<float, 4> Vec4f;
+typedef Vec<double, 4> Vec4d;
+
 
 #endif

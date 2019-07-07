@@ -1,4 +1,5 @@
 #include "objects.hpp"
+#include <iostream>
 
 Sphere::Sphere(Vec3f center, float radius, Color color) {
     this->center = center;
@@ -14,7 +15,7 @@ float Sphere::intersect(Vec3f origin, Vec3f dir) const {
 
     if (D < 0)
         return -1.f;
-    else if (D - 0 < __FLT_EPSILON__)
+    else if (D - 0 < 1e-3)
         return -B; // /2.f
     else {
         float t1 = (-B + sqrtf(D)); // /2.f

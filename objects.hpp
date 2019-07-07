@@ -4,16 +4,7 @@
 #include "vec.hpp"
 #include "util.hpp"
 
-// class VolumeObject {
-// public:
-//     //Returns distance to touch (If it's negative, then there is no intersection)
-//     virtual float intersect(Vec3f origin, Vec3f dir) const { throw "ABSTRACT"; }; 
-
-//     virtual Vec3f normal(Vec3f touch) const { throw "ABSTRACT"; };
-//     virtual Color color(Vec3f touch) const { throw "ABSTRACT"; };
-// };
-
-class Sphere /* : public VolumeObject */ {
+class Sphere {
 private:
     Vec3f center;
     float radius;
@@ -25,5 +16,15 @@ public:
     Vec3f normal(Vec3f touch) const;
     Color color(Vec3f touch) const;
 };
+
+struct Light {
+    Vec3f loc;
+    float power;
+    Light(Vec3f loc, float power) {
+        this->loc = loc;
+        this->power = power;
+    }
+};
+
 
 #endif

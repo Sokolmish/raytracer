@@ -3,6 +3,7 @@
 
 #include <string>
 #include "vec.hpp"
+#include "util.hpp"
 
 class Image {
 private:
@@ -16,8 +17,8 @@ public:
     Image(int width, int height);
     ~Image();
 
-    void setPixel(int x, int y, Vec3i color);
-    Vec3i getPixel(int x, int y) const;
+    void setPixel(int x, int y, Color color);
+    Color getPixel(int x, int y) const;
 
     int write(const char *path) const;
 };
