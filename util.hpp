@@ -2,9 +2,14 @@
 #define __UTIL_H__
 
 #include <cmath>
+#include <algorithm>
 #include "vec.hpp"
 
 float toRad(float deg);
+
+Vec3f getNearPoint(Vec3f point, Vec3f ray, Vec3f normal);
+Vec3f getReflection(Vec3f dir, Vec3f normal);
+Vec3f getRefraction(Vec3f dir, Vec3f normal, float coeff);
 
 typedef Vec3f Color;
 

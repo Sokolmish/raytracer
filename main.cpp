@@ -9,6 +9,7 @@
 #define FILENAME "./output.bmp"
 
 #define BACKGROUND LIGHT_BLUE //Later background will be changed to skybox
+#define MAX_DEPTH 4
 
 float getIntersection(Vec3f origin, Vec3f dir, std::vector<Sphere> objects, Sphere **out) {
     *out = NULL;
@@ -23,7 +24,10 @@ float getIntersection(Vec3f origin, Vec3f dir, std::vector<Sphere> objects, Sphe
     return len;
 }
 
-Color traceRay(Vec3f origin, Vec3f dir, std::vector<Sphere> objects, std::vector<Light> lights) {
+Color traceRay(Vec3f origin, Vec3f dir, std::vector<Sphere> objects, std::vector<Light> lights, int depth) {
+    if (depth >= MAX_DEPTH)
+        return BACKGROUND;
+
     Sphere *_target;
     float tLen = getIntersection(origin, dir, objects, &_target);
 
@@ -34,19 +38,31 @@ Color traceRay(Vec3f origin, Vec3f dir, std::vector<Sphere> objects, std::vector
     Vec3f touch = origin + tLen * dir;
     Vec3f normal = target.normal(touch);
     Material mat = target.material(touch);
+
+    Color reflColor = BLACK, refrColor = BLACK; //Black don't affect to color in addition
+    if (mat.albedo[2] >= 1e-3) {
+        Vec3f reflDir = getReflection(dir, normal);
+        Vec3f reflTouch = getNearPoint(touch, reflDir, normal);
+        reflColor = traceRay(reflTouch, reflDir, objects, lights, depth + 1);
+    }
+    if (mat.albedo[3] >= 1e-3) {
+        Vec3f refrDir = getRefraction(dir, normal, mat.refractive_index);
+        Vec3f refrTouch = getNearPoint(touch, refrDir, normal);
+        refrColor = traceRay(refrTouch, refrDir, objects, lights, depth + 1);
+    }
     
     float diffIntense = 0.f;
     float specIntense = 0.f;
     for (auto&& light : lights) {
         Vec3f lDir = (light.loc - touch).normalize(); //Light direction
-        Vec3f nTouch = (lDir * normal) > 0 ? touch + normal * 1e-3 : touch - normal * 1e-3;
+        Vec3f lightTouch = getNearPoint(touch, lDir, normal);
         Sphere *temp;
-        if (getIntersection(nTouch, lDir, objects, &temp) >= (light.loc - nTouch).length() || temp == NULL) { //Dangerous!
+        if (getIntersection(lightTouch, lDir, objects, &temp) >= (light.loc - lightTouch).length() || temp == NULL) { //Dangerous!
             float tPower = lDir * target.normal(touch);
             if (tPower > 0)
                 diffIntense += tPower * light.power;
 
-            Vec3f rDir = -lDir + (2.f * (lDir * normal)) * normal; //Reflection direction
+            Vec3f rDir = getReflection(-lDir, normal);
             tPower = -(rDir * dir);
             if (tPower > 0)
                 specIntense += powf(tPower, mat.specular_exponent) * light.power;
@@ -54,7 +70,9 @@ Color traceRay(Vec3f origin, Vec3f dir, std::vector<Sphere> objects, std::vector
     }
     
     return  mat.diffuse_color * diffIntense * mat.albedo[0] +
-            WHITE * specIntense * mat.albedo[1];
+            WHITE * specIntense * mat.albedo[1] +
+            reflColor * mat.albedo[2] +
+            refrColor * mat.albedo[3];
 }
 
 int main(int argc, char **argv) {
@@ -63,9 +81,11 @@ int main(int argc, char **argv) {
 
     objects.push_back(Sphere(Vec3f(0, 0, -14), 3, RED_RUBBER));
     objects.push_back(Sphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER));
+    objects.push_back(Sphere(Vec3f(-4, 4, -15), 3, MIRROR));
 
     lights.push_back(Light(Vec3f(10, 25, -1), 3));
     lights.push_back(Light(Vec3f(-6, 5, -6), 2));
+
 
     int width = 1024; //Resolution
     int height = 768;
@@ -75,7 +95,6 @@ int main(int argc, char **argv) {
     Vec3f cameraUp(0, 1, 0); //This vector defines the vertical direction on screen
 
     float fov = toRad(90); //Generaly defines depth 
-    int maxDepth = 4;
 
     float ratio = width / height;
     float depth = width / (2 * tan(fov / 2)); //Length from camera to screen
@@ -88,7 +107,7 @@ int main(int argc, char **argv) {
             int xSh = -width / 2 + i;
             int ySh = -height / 2 + j;
             Vec3f curDir = (cameraDir * depth + cameraUp * ySh + cameraRight * xSh).normalize();
-            image.setPixel(i, j, traceRay(cameraPos, curDir, objects, lights));
+            image.setPixel(i, j, traceRay(cameraPos, curDir, objects, lights, 0));
         }
     }
 
