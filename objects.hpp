@@ -23,7 +23,14 @@ struct Material {
     }
 };
 
-class Sphere {
+class VolumeObj {
+public:
+    virtual float intersect(Vec3f origin, Vec3f dir) const = 0;
+    virtual Vec3f normal(Vec3f touch) const = 0;
+    virtual Material material(Vec3f touch) const = 0;
+};
+
+class Sphere : public VolumeObj {
 private:
     Vec3f center;
     float radius;
@@ -45,5 +52,15 @@ struct Light {
     }
 };
 
+
+struct Scene {
+    std::vector<VolumeObj*> objects;
+    std::vector<Light> lights;
+};
+
+struct Camera {
+    Vec3f pos, dir, up, right;
+    float width, height, depth, ratio, fov;
+};
 
 #endif

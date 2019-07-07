@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <omp.h>
+#include <ctime>
 
 #include "image.hpp"
 #include "util.hpp"
@@ -11,30 +13,30 @@
 #define BACKGROUND LIGHT_BLUE //Later background will be changed to skybox
 #define MAX_DEPTH 4
 
-float getIntersection(Vec3f origin, Vec3f dir, std::vector<Sphere> objects, Sphere **out) {
+float getIntersection(const Vec3f &origin, const Vec3f &dir, const std::vector<VolumeObj*> &objects, VolumeObj **out) {
     *out = NULL;
     float len = __FLT_MAX__;
     for (auto&& obj : objects) {
-        float t = obj.intersect(origin, dir);
+        float t = obj->intersect(origin, dir);
         if (t >= 0 && t < len) {
-            *out = &obj;
+            *out = obj;
             len = t;
         }
     }
     return len;
 }
 
-Color traceRay(Vec3f origin, Vec3f dir, std::vector<Sphere> objects, std::vector<Light> lights, int depth) {
+Color traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene, int depth) {
     if (depth >= MAX_DEPTH)
         return BACKGROUND;
 
-    Sphere *_target;
-    float tLen = getIntersection(origin, dir, objects, &_target);
+    VolumeObj *_target;
+    float tLen = getIntersection(origin, dir, scene.objects, &_target);
 
     if (_target == NULL)
         return BACKGROUND;
 
-    Sphere &target = *_target;
+    VolumeObj &target = *_target;
     Vec3f touch = origin + tLen * dir;
     Vec3f normal = target.normal(touch);
     Material mat = target.material(touch);
@@ -43,21 +45,21 @@ Color traceRay(Vec3f origin, Vec3f dir, std::vector<Sphere> objects, std::vector
     if (mat.albedo[2] >= 1e-3) {
         Vec3f reflDir = getReflection(dir, normal);
         Vec3f reflTouch = getNearPoint(touch, reflDir, normal);
-        reflColor = traceRay(reflTouch, reflDir, objects, lights, depth + 1);
+        reflColor = traceRay(reflTouch, reflDir, scene, depth + 1);
     }
     if (mat.albedo[3] >= 1e-3) {
         Vec3f refrDir = getRefraction(dir, normal, mat.refractive_index);
         Vec3f refrTouch = getNearPoint(touch, refrDir, normal);
-        refrColor = traceRay(refrTouch, refrDir, objects, lights, depth + 1);
+        refrColor = traceRay(refrTouch, refrDir, scene, depth + 1);
     }
     
     float diffIntense = 0.f;
     float specIntense = 0.f;
-    for (auto&& light : lights) {
+    for (auto&& light : scene.lights) {
         Vec3f lDir = (light.loc - touch).normalize(); //Light direction
         Vec3f lightTouch = getNearPoint(touch, lDir, normal);
-        Sphere *temp;
-        if (getIntersection(lightTouch, lDir, objects, &temp) >= (light.loc - lightTouch).length() || temp == NULL) { //Dangerous!
+        VolumeObj *temp;
+        if (getIntersection(lightTouch, lDir, scene.objects, &temp) >= (light.loc - lightTouch).length() || temp == NULL) { //Dangerous!
             float tPower = lDir * target.normal(touch);
             if (tPower > 0)
                 diffIntense += tPower * light.power;
@@ -75,42 +77,51 @@ Color traceRay(Vec3f origin, Vec3f dir, std::vector<Sphere> objects, std::vector
             refrColor * mat.albedo[3];
 }
 
-int main(int argc, char **argv) {
-    std::vector<Sphere> objects;
-    std::vector<Light> lights;
-
-    objects.push_back(Sphere(Vec3f(0, 0, -14), 3, RED_RUBBER));
-    objects.push_back(Sphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER));
-    objects.push_back(Sphere(Vec3f(-4, 4, -15), 3, MIRROR));
-
-    lights.push_back(Light(Vec3f(10, 25, -1), 3));
-    lights.push_back(Light(Vec3f(-6, 5, -6), 2));
-
-
-    int width = 1024; //Resolution
-    int height = 768;
-
-    Vec3f cameraPos(0, 0, 0);
-    Vec3f cameraDir(0, 0, -1); //Direction of view
-    Vec3f cameraUp(0, 1, 0); //This vector defines the vertical direction on screen
-
-    float fov = toRad(90); //Generaly defines depth 
-
-    float ratio = width / height;
-    float depth = width / (2 * tan(fov / 2)); //Length from camera to screen
-    Vec3f cameraRight = cameraDir ^ cameraUp;
-
-    Image image(width, height);
-    
-    for (int j = 0; j < height; j++) {
-        for (int i = 0; i < width; i++) {
-            int xSh = -width / 2 + i;
-            int ySh = -height / 2 + j;
-            Vec3f curDir = (cameraDir * depth + cameraUp * ySh + cameraRight * xSh).normalize();
-            image.setPixel(i, j, traceRay(cameraPos, curDir, objects, lights, 0));
+void render(Image &image, const Camera &camera, const Scene &scene) {
+    // #pragma omp parallel for
+    for (int j = 0; j < camera.height; j++) {
+        for (int i = 0; i < camera.width; i++) {
+            int xSh = -camera.width / 2 + i;
+            int ySh = -camera.height / 2 + j;
+            Vec3f curDir = (camera.dir * camera.depth + camera.up * ySh + camera.right * xSh).normalize();
+            image.setPixel(i, j, traceRay(camera.pos, curDir, scene, 0));
         }
     }
+}
 
+int main(int argc, char **argv) {
+    uint32_t time = clock();
+
+    Scene scene;
+
+    scene.objects.push_back(new Sphere(Vec3f(0, 0, -14), 3, RED_RUBBER));
+    scene.objects.push_back(new Sphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER));
+    scene.objects.push_back(new Sphere(Vec3f(-4, 4, -15), 3, MIRROR));
+
+    scene.lights.push_back(Light(Vec3f(10, 25, -1), 3));
+    scene.lights.push_back(Light(Vec3f(-6, 5, -6), 2));
+
+    Camera camera;
+
+    camera.width = 1280; //Resolution
+    camera.height = 720;
+
+    camera.pos = Vec3f(0, 0, 0);
+    camera.dir = Vec3f(0, 0, -1); //Direction of view
+    camera.up = Vec3f(0, 1, 0); //This vector defines the vertical direction on screen
+
+    camera.fov = toRad(90); //Generaly defines depth 
+
+    camera.ratio = camera.width / camera.height;
+    camera.depth = camera.width / (2 * tan(camera.fov / 2)); //Length from camera to screen
+    camera.right = camera.dir ^ camera.up;
+
+    Image image(camera.width, camera.height);
+    render(image, camera, scene);
+    std::cout << "Time: " << (clock() - time) / (float) CLOCKS_PER_SEC << " seconds." << std::endl;
     image.write(FILENAME);
+
+    for (auto&& t : scene.objects)
+        delete t;
     return 0;
 }
