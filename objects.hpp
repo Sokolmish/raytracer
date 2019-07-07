@@ -1,8 +1,8 @@
 #ifndef __OBJECTS_H__
 #define __OBJECTS_H__
 
-#include "vec.h"
-#include "util.h"
+#include "vec.hpp"
+#include "util.hpp"
 
 // class VolumeObject {
 // public:

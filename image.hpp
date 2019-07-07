@@ -2,7 +2,7 @@
 #define __IMAGE_H__
 
 #include <string>
-#include "vec.h"
+#include "vec.hpp"
 
 class Image {
 private:

@@ -2,7 +2,7 @@
 #define __UTIL_H__
 
 #include <cmath>
-#include "vec.h"
+#include "vec.hpp"
 
 typedef Vec3i Color;
 

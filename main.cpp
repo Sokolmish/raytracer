@@ -1,9 +1,9 @@
 #include <iostream>
 #include <vector>
 
-#include "image.h"
-#include "util.h"
-#include "vec.h"
+#include "image.hpp"
+#include "util.hpp"
+#include "vec.hpp"
 #include "objects.hpp"
 
 #define FILENAME "./output.bmp"
