@@ -25,27 +25,36 @@ Color traceRay(Vec3f origin, Vec3f dir, std::vector<Sphere> objects, std::vector
 
     Sphere &target = *_target;
     Vec3f touch = origin + tLen * dir;
-    Color diffCol = target.color(touch);
+    Vec3f normal = target.normal(touch);
+    Material mat = target.material(touch);
     
-    float lightIntense = 0.f;
+    float diffIntense = 0.f;
+    float specIntense = 0.f;
     for (auto&& light : lights) {
-        Vec3f lDir = (light.loc - touch).normalize();
+        Vec3f lDir = (light.loc - touch).normalize(); //Light direction
         float tPower = lDir * target.normal(touch);
         if (tPower > 0)
-            lightIntense += tPower * light.power;
+            diffIntense += tPower * light.power;
+
+        Vec3f rDir = -lDir + (2.f * (lDir * normal)) * normal ;
+        tPower = -(rDir * dir);
+        if (tPower > 0)
+            specIntense += powf(tPower, mat.specular_exponent) * light.power;
     }
     
-    return diffCol * lightIntense;
+    return  mat.diffuse_color * diffIntense * mat.albedo[0] +
+            WHITE * specIntense * mat.albedo[1];
 }
 
 int main(int argc, char **argv) {
     std::vector<Sphere> objects;
     std::vector<Light> lights;
 
-    objects.push_back(Sphere(Vec3f(0, 0, -14), 3, RED));
-    objects.push_back(Sphere(Vec3f(3, 4.5, -12.5), 2.5, BLUE));
+    objects.push_back(Sphere(Vec3f(0, 0, -14), 3, RED_RUBBER));
+    objects.push_back(Sphere(Vec3f(3, 4.5, -12.5), 2.5, BLUE_RUBBER));
 
-    lights.push_back(Light(Vec3f(10, 25, 1), 1.2));
+    lights.push_back(Light(Vec3f(10, 25, -1), 3));
+    lights.push_back(Light(Vec3f(-30, 16, 6), 2));
 
     int width = 1024; //Resolution
     int height = 768;

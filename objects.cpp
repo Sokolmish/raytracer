@@ -1,10 +1,10 @@
 #include "objects.hpp"
 #include <iostream>
 
-Sphere::Sphere(Vec3f center, float radius, Color color) {
+Sphere::Sphere(Vec3f center, float radius, Material mat) {
     this->center = center;
     this->radius = radius;
-    this->mat = color;
+    this->mat = mat;
 }
 
 float Sphere::intersect(Vec3f origin, Vec3f dir) const {
@@ -29,6 +29,6 @@ Vec3f Sphere::normal(Vec3f touch) const {
     return (touch - center).normalize();
 }
 
-Color Sphere::color(Vec3f touch) const {
+Material Sphere::material(Vec3f touch) const {
     return mat;
 }

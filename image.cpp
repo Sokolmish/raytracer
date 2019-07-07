@@ -17,9 +17,13 @@ Image::~Image() {
 }
 
 void Image::setPixel(int x, int y, Color color) {
-    data[(width * y + x) * 3 + 0] = (unsigned char) (color[0] > 255 ? 255 : color[0]);
-    data[(width * y + x) * 3 + 1] = (unsigned char) (color[1] > 255 ? 255 : color[1]);
-    data[(width * y + x) * 3 + 2] = (unsigned char) (color[2] > 255 ? 255 : color[2]);
+    float max = std::max(std::max(color[0], color[1]), color[2]);
+    if (max > 255) {
+        int ttttt = -1;
+    }
+    data[(width * y + x) * 3 + 0] = (unsigned char) (max > 255 ? color[0] / max * 255 : color[0]);
+    data[(width * y + x) * 3 + 1] = (unsigned char) (max > 255 ? color[1] / max * 255 : color[1]);
+    data[(width * y + x) * 3 + 2] = (unsigned char) (max > 255 ? color[2] / max * 255 : color[2]);
 }
 
 Color Image::getPixel(int x, int y) const {

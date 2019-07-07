@@ -14,6 +14,7 @@ private:
 public:
     Vec();
     Vec(T a1, T a2, T a3); //Change it to specialization 
+    Vec(T a1, T a2, T a3, T a4); //Change it to specialization 
 
     T& operator[] (int ind);
 
@@ -50,6 +51,17 @@ Vec<T, dim>::Vec(T a1, T a2, T a3) {
     data[1] = a2;
     data[2] = a3;
 }
+
+template <typename T, int dim>
+Vec<T, dim>::Vec(T a1, T a2, T a3, T a4) {
+    if (dim != 4)
+        throw;
+    data[0] = a1;
+    data[1] = a2;
+    data[2] = a3;
+    data[3] = a4;
+}
+
 
 template <typename T, int dim>
 T& Vec<T, dim>::operator[] (int ind) {
