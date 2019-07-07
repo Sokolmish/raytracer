@@ -8,6 +8,9 @@ template <typename T, int dim>
 class Vec {
 private:
     T data[dim];
+
+    template<typename U, int D>
+    friend Vec<U, D> operator* (U lhs, const Vec<U, D> &rhs);
 public:
     Vec();
     Vec(T a1, T a2, T a3); //Change it to specialization 
@@ -23,6 +26,8 @@ public:
     Vec<T, dim> operator- (const Vec<T, dim>& rhs) const;
     Vec<T, dim> operator* (T rhs) const;
     Vec<T, dim> operator/ (T rhs) const;
+
+    Vec<T, dim> operator- () const;
 
     T operator* (const Vec<T, dim>& rhs) const; //Dot product
     Vec<T, dim> operator^ (const Vec<T, dim>& rhs) const; //Cross product
@@ -100,6 +105,11 @@ Vec<T, dim> Vec<T, dim>::operator/ (T rhs) const {
 }
 
 template <typename T, int dim>
+Vec<T, dim> Vec<T, dim>::operator-() const {
+    return Vec<T, dim>(*this) * -1;
+}
+
+template <typename T, int dim>
 T Vec<T, dim>::operator* (const Vec<T, dim>& rhs) const {
     int t = 0;
     for (int i = 0; i < dim; i++)
@@ -131,17 +141,14 @@ Vec<T, dim> Vec<T, dim>::normalize() const {
     return Vec<T, dim>(*this) /= length();
 }
 
+template <typename U, int D>
+Vec<U, D> operator* (U lhs, const Vec<U, D> &rhs) {
+    return rhs * lhs;
+}
 
-typedef Vec<int, 2> Vec2i;
-typedef Vec<float, 2> Vec2f;
-typedef Vec<double, 2> Vec2d;
 
 typedef Vec<int, 3> Vec3i;
 typedef Vec<float, 3> Vec3f;
 typedef Vec<double, 3> Vec3d;
-
-typedef Vec<int, 4> Vec4i;
-typedef Vec<float, 4> Vec4f;
-typedef Vec<double, 4> Vec4d;
 
 #endif

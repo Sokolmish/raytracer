@@ -18,8 +18,6 @@ typedef Vec3i Color;
 #define LIGHT_GRAY Color(192, 192, 192)
 #define LIGHT_BLUE Color(173, 216, 230)
 
-float toRad(float deg) {
-    return deg * (M_PI / 180);
-}
+float toRad(float deg);
 
 #endif
