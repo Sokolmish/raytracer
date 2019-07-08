@@ -2,7 +2,6 @@
 #define __IMAGE_H__
 
 #include <string>
-#include "vec.hpp"
 #include "util.hpp"
 
 class Image {
@@ -17,7 +16,7 @@ public:
     Image(int width, int height);
     ~Image();
 
-    void setPixel(int x, int y, Color color);
+    void setPixel(int x, int y, const Color &color);
     Color getPixel(int x, int y) const;
 
     int write(const char *path) const;

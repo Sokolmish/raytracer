@@ -1,7 +1,6 @@
 #ifndef __OBJECTS_H__
 #define __OBJECTS_H__
 
-#include "vec.hpp"
 #include "util.hpp"
 
 struct Material {
@@ -25,9 +24,9 @@ struct Material {
 
 class VolumeObj {
 public:
-    virtual float intersect(Vec3f origin, Vec3f dir) const = 0;
-    virtual Vec3f normal(Vec3f touch) const = 0;
-    virtual Material material(Vec3f touch) const = 0;
+    virtual float intersect(const Vec3f &origin, const Vec3f &dir) const = 0;
+    virtual Vec3f normal(const Vec3f &touch) const = 0;
+    virtual Material material(const Vec3f &touch) const = 0;
 };
 
 class Sphere : public VolumeObj {
@@ -36,11 +35,11 @@ private:
     float radius;
     Material mat;
 public:
-    Sphere(Vec3f center, float radius, Material mat);
+    Sphere(const Vec3f &center, float radius, const Material &mat);
 
-    float intersect(Vec3f origin, Vec3f dir) const;
-    Vec3f normal(Vec3f touch) const;
-    Material material(Vec3f touch) const;
+    float intersect(const Vec3f &origin, const Vec3f &dir) const;
+    Vec3f normal(const Vec3f &touch) const;
+    Material material(const Vec3f &touch) const;
 };
 
 struct Light {
@@ -52,7 +51,6 @@ struct Light {
     }
 };
 
-
 struct Scene {
     std::vector<VolumeObj*> objects;
     std::vector<Light> lights;
@@ -60,7 +58,10 @@ struct Scene {
 
 struct Camera {
     Vec3f pos, dir, up, right;
-    float width, height, depth, ratio, fov;
+    int width, height;
+    float depth, ratio, fov;
+    Camera();
+    Camera(int width, int height, const Vec3f &pos, const Vec3f &dir, const Vec3f &up, float fov);
 };
 
 #endif

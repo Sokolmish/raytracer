@@ -5,7 +5,6 @@
 
 #include "image.hpp"
 #include "util.hpp"
-#include "vec.hpp"
 #include "objects.hpp"
 
 #define FILENAME "./output.bmp"
@@ -78,12 +77,12 @@ Color traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene, int de
 }
 
 void render(Image &image, const Camera &camera, const Scene &scene) {
+    int xSh = -camera.width / 2;
+    int ySh = -camera.height / 2;
     // #pragma omp parallel for
     for (int j = 0; j < camera.height; j++) {
         for (int i = 0; i < camera.width; i++) {
-            int xSh = -camera.width / 2 + i;
-            int ySh = -camera.height / 2 + j;
-            Vec3f curDir = (camera.dir * camera.depth + camera.up * ySh + camera.right * xSh).normalize();
+            Vec3f curDir = (camera.dir * camera.depth + camera.up * (ySh + j) + camera.right * (xSh + i)).normalize();
             image.setPixel(i, j, traceRay(camera.pos, curDir, scene, 0));
         }
     }
@@ -91,8 +90,15 @@ void render(Image &image, const Camera &camera, const Scene &scene) {
 
 int main(int argc, char **argv) {
     uint32_t time = clock();
-
     Scene scene;
+
+    Camera camera(
+        1280, 720,          //Resolution
+        Vec3f(0, 0, 0),     //Position
+        Vec3f(0, 0, -1),    //Direction of view
+        Vec3f(0, 1, 0),     //Vertical direction
+        toRad(90)           //FOV
+    );
 
     scene.objects.push_back(new Sphere(Vec3f(0, 0, -14), 3, RED_RUBBER));
     scene.objects.push_back(new Sphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER));
@@ -100,21 +106,6 @@ int main(int argc, char **argv) {
 
     scene.lights.push_back(Light(Vec3f(10, 25, -1), 3));
     scene.lights.push_back(Light(Vec3f(-6, 5, -6), 2));
-
-    Camera camera;
-
-    camera.width = 1280; //Resolution
-    camera.height = 720;
-
-    camera.pos = Vec3f(0, 0, 0);
-    camera.dir = Vec3f(0, 0, -1); //Direction of view
-    camera.up = Vec3f(0, 1, 0); //This vector defines the vertical direction on screen
-
-    camera.fov = toRad(90); //Generaly defines depth 
-
-    camera.ratio = camera.width / camera.height;
-    camera.depth = camera.width / (2 * tan(camera.fov / 2)); //Length from camera to screen
-    camera.right = camera.dir ^ camera.up;
 
     Image image(camera.width, camera.height);
     render(image, camera, scene);

@@ -4,18 +4,18 @@ float toRad(float deg) {
     return deg * (M_PI / 180);
 }
 
-Vec3f getNearPoint(Vec3f point, Vec3f ray, Vec3f normal) {
+Vec3f getNearPoint(const Vec3f &point, const Vec3f &ray, const Vec3f &normal) {
     if ((ray * normal) > 0) 
         return point + 1e-3f * normal;
     else
         return point - 1e-3f * normal;
 }
 
-Vec3f getReflection(Vec3f dir, Vec3f normal) {
+Vec3f getReflection(const Vec3f &dir, const Vec3f &normal) {
     return dir - (2.f * (dir * normal)) * normal;
 }
 
-Vec3f getRefraction(Vec3f dir, Vec3f normal, float coeff) { //
+Vec3f getRefraction(const Vec3f &dir, const Vec3f &normal, float coeff) { //
     float cosi = -std::max(-1.f, std::min(1.f, (dir * normal)));
     float etai = 1, etat = coeff;
     Vec3f n = normal;

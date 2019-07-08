@@ -17,6 +17,7 @@ public:
     Vec(T a1, T a2, T a3, T a4); //Change it to specialization 
 
     T& operator[] (int ind);
+    const T& operator[] (int ind) const;
 
     Vec<T, dim>& operator+= (const Vec<T, dim>& rhs);
     Vec<T, dim>& operator-= (const Vec<T, dim>& rhs);
@@ -36,6 +37,8 @@ public:
     T length() const;
     Vec<T, dim> normalize() const;
 };
+
+//Constructors
 
 template <typename T, int dim>
 Vec<T, dim>::Vec() {
@@ -62,11 +65,19 @@ Vec<T, dim>::Vec(T a1, T a2, T a3, T a4) {
     data[3] = a4;
 }
 
+//Indexation
 
 template <typename T, int dim>
 T& Vec<T, dim>::operator[] (int ind) {
     return data[ind];
 }
+
+template <typename T, int dim>
+const T& Vec<T, dim>::operator[] (int ind) const {
+    return data[ind];
+}
+
+//Compound assigment
 
 template <typename T, int dim>
 Vec<T, dim>& Vec<T, dim>::operator+= (const Vec<T, dim>& rhs) {
@@ -96,6 +107,8 @@ Vec<T, dim>& Vec<T, dim>::operator/= (T rhs) {
     return *this;
 }
 
+//Arithmetic
+
 template <typename T, int dim>
 Vec<T, dim> Vec<T, dim>::operator+ (const Vec<T, dim>& rhs) const {
     return Vec<T, dim>(*this) += rhs;
@@ -121,6 +134,8 @@ Vec<T, dim> Vec<T, dim>::operator-() const {
     return Vec<T, dim>(*this) * -1;
 }
 
+//Products
+
 template <typename T, int dim>
 T Vec<T, dim>::operator* (const Vec<T, dim>& rhs) const {
     T t = 0;
@@ -140,6 +155,8 @@ Vec<T, dim> Vec<T, dim>::operator^ (const Vec<T, dim>& rhs) const {
     );
 }
 
+//Euclidean operations
+
 template <typename T, int dim>
 T Vec<T, dim>::length() const {
     T t = 0;
@@ -152,6 +169,8 @@ template <typename T, int dim>
 Vec<T, dim> Vec<T, dim>::normalize() const {
     return Vec<T, dim>(*this) /= length();
 }
+
+//Friend operations
 
 template <typename U, int D>
 Vec<U, D> operator* (U lhs, const Vec<U, D> &rhs) {

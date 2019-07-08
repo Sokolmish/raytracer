@@ -7,9 +7,9 @@
 
 float toRad(float deg);
 
-Vec3f getNearPoint(Vec3f point, Vec3f ray, Vec3f normal);
-Vec3f getReflection(Vec3f dir, Vec3f normal);
-Vec3f getRefraction(Vec3f dir, Vec3f normal, float coeff);
+Vec3f getNearPoint(const Vec3f &point, const Vec3f &ray, const Vec3f &normal);
+Vec3f getReflection(const Vec3f &dir, const Vec3f &normal);
+Vec3f getRefraction(const Vec3f &dir, const Vec3f &normal, float coeff);
 
 typedef Vec3f Color;
 

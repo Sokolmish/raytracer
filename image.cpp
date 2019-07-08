@@ -16,7 +16,7 @@ Image::~Image() {
     delete[] data;
 }
 
-void Image::setPixel(int x, int y, Color color) {
+void Image::setPixel(int x, int y, const Color &color) {
     float max = std::max(std::max(color[0], color[1]), color[2]);
     data[(width * y + x) * 3 + 0] = (unsigned char) (max > 255 ? color[0] / max * 255 : color[0]);
     data[(width * y + x) * 3 + 1] = (unsigned char) (max > 255 ? color[1] / max * 255 : color[1]);
