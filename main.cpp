@@ -79,7 +79,7 @@ Color traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene, int de
 void render(Image &image, const Camera &camera, const Scene &scene) {
     int xSh = -camera.width / 2;
     int ySh = -camera.height / 2;
-    // #pragma omp parallel for
+    #pragma omp parallel for
     for (int j = 0; j < camera.height; j++) {
         for (int i = 0; i < camera.width; i++) {
             Vec3f curDir = (camera.dir * camera.depth + camera.up * (ySh + j) + camera.right * (xSh + i)).normalize();
@@ -89,12 +89,12 @@ void render(Image &image, const Camera &camera, const Scene &scene) {
 }
 
 int main(int argc, char **argv) {
-    uint32_t time = clock();
+    uint64_t time = clock();
     Scene scene;
 
     Camera camera(
-        1280, 720,          //Resolution
-        Vec3f(0, 0, 0),     //Position
+        1920, 1080,         //Resolution
+        Vec3f(0, 1.5, 0),   //Position
         Vec3f(0, 0, -1),    //Direction of view
         Vec3f(0, 1, 0),     //Vertical direction
         toRad(90)           //FOV
@@ -102,7 +102,16 @@ int main(int argc, char **argv) {
 
     scene.objects.push_back(new Sphere(Vec3f(0, 0, -14), 3, RED_RUBBER));
     scene.objects.push_back(new Sphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER));
-    scene.objects.push_back(new Sphere(Vec3f(-4, 4, -15), 3, MIRROR));
+    scene.objects.push_back(new Sphere(Vec3f(-4, 5, -15), 3, MIRROR));
+
+    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -9), Vec3f(7, -3, -9), Vec3f(7, -3, -20), GREEN_RUBBER));
+    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -9), Vec3f(7, -3, -20), Vec3f(-8, -3, -20), GREEN_RUBBER));
+
+    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -9), Vec3f(-8, -3, -20), Vec3f(-8, 9, -20), MIRROR));
+    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -9), Vec3f(-8, 9, -20), Vec3f(-8, 9, -9), MIRROR));
+
+    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -20), Vec3f(7, -3, -20), Vec3f(7, 9, -20), MIRROR));
+    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -20), Vec3f(7, 9, -20), Vec3f(-8, 9, -20), MIRROR));
 
     scene.lights.push_back(Light(Vec3f(10, 25, -1), 3));
     scene.lights.push_back(Light(Vec3f(-6, 5, -6), 2));

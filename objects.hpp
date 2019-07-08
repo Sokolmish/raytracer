@@ -3,6 +3,15 @@
 
 #include "util.hpp"
 
+struct Camera {
+    Vec3f pos, dir, up, right;
+    int width, height;
+    float depth, ratio, fov;
+    Camera();
+    Camera(int width, int height, const Vec3f &pos, const Vec3f &dir, const Vec3f &up, float fov);
+};
+
+
 struct Material {
     float refractive_index;
     Vec4f albedo;
@@ -29,19 +38,6 @@ public:
     virtual Material material(const Vec3f &touch) const = 0;
 };
 
-class Sphere : public VolumeObj {
-private:
-    Vec3f center;
-    float radius;
-    Material mat;
-public:
-    Sphere(const Vec3f &center, float radius, const Material &mat);
-
-    float intersect(const Vec3f &origin, const Vec3f &dir) const;
-    Vec3f normal(const Vec3f &touch) const;
-    Material material(const Vec3f &touch) const;
-};
-
 struct Light {
     Vec3f loc;
     float power;
@@ -56,12 +52,31 @@ struct Scene {
     std::vector<Light> lights;
 };
 
-struct Camera {
-    Vec3f pos, dir, up, right;
-    int width, height;
-    float depth, ratio, fov;
-    Camera();
-    Camera(int width, int height, const Vec3f &pos, const Vec3f &dir, const Vec3f &up, float fov);
+class Sphere : public VolumeObj {
+private:
+    Vec3f center;
+    float radius;
+    Material mat;
+public:
+    Sphere(const Vec3f &center, float radius, const Material &mat);
+
+    float intersect(const Vec3f &origin, const Vec3f &dir) const;
+    Vec3f normal(const Vec3f &touch) const;
+    Material material(const Vec3f &touch) const;
+};
+
+class Triangle : public VolumeObj {
+private:
+    Vec3f p1, p2, p3;
+    Material mat;
+
+    Vec3f norm;
+public:
+    Triangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Material &mat);
+
+    float intersect(const Vec3f &origin, const Vec3f &dir) const;
+    Vec3f normal(const Vec3f &touch) const;
+    Material material(const Vec3f &touch) const;
 };
 
 #endif
