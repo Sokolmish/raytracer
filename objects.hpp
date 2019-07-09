@@ -2,6 +2,8 @@
 #define __OBJECTS_H__
 
 #include "util.hpp"
+#include <vector>
+#include <initializer_list>
 
 struct Camera {
     Vec3f pos, dir, up, right;
@@ -78,5 +80,9 @@ public:
     Vec3f normal(const Vec3f &touch) const;
     Material material(const Vec3f &touch) const;
 };
+
+std::vector<Triangle*> createQuadrangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Vec3f &p4, const Material &mat);
+
+std::vector<Triangle*> createPyramid(const Vec3f &top, float height, float edge, const Material &mat); //Right triangular pyramid
 
 #endif

@@ -12,7 +12,7 @@
 #define FILENAME "./output.bmp"
 
 #define BACKGROUND LIGHT_BLUE //Later background will be changed to skybox
-#define MAX_DEPTH 5
+#define MAX_DEPTH 6
 
 float getIntersection(const Vec3f &origin, const Vec3f &dir, const std::vector<VolumeObj*> &objects, VolumeObj **out) {
     *out = NULL;
@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
 
     Camera camera(
         RES_HD              //Resolution
-        Vec3f(2, 2.5, 3),   //Position
+        Vec3f(3, 2.5, 3),   //Position
         Vec3f(0, 0, -1),    //Direction of view
         Vec3f(0, 1, 0),     //Vertical direction
         toRad(90)           //FOV
@@ -106,17 +106,23 @@ int main(int argc, char **argv) {
     scene.objects.push_back(new Sphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER));
     scene.objects.push_back(new Sphere(Vec3f(-4, 5, -15), 3, MIRROR));
 
-    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -9), Vec3f(12, -3, -9), Vec3f(12, -3, -20), GREEN_RUBBER));
-    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -9), Vec3f(12, -3, -20), Vec3f(-8, -3, -20), GREEN_RUBBER));
+    for (auto&& t : createQuadrangle(Vec3f(-8, -3, -9), Vec3f(15, -3, -9), Vec3f(15, -3, -20), Vec3f(-8, -3, -20), GREEN_RUBBER))
+        scene.objects.push_back(t);
+    for (auto&& t : createQuadrangle(Vec3f(-8, -3, -9), Vec3f(-8, -3, -20), Vec3f(-8, 9, -20), Vec3f(-8, 9, -9), MIRROR))
+        scene.objects.push_back(t);
+    for (auto&& t : createQuadrangle(Vec3f(-8, -3, -20), Vec3f(15, -3, -20), Vec3f(15, 9, -20), Vec3f(-8, 9, -20), MIRROR))
+        scene.objects.push_back(t);
 
-    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -9), Vec3f(-8, -3, -20), Vec3f(-8, 9, -20), MIRROR));
-    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -9), Vec3f(-8, 9, -20), Vec3f(-8, 9, -9), MIRROR));
-
-    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -20), Vec3f(12, -3, -20), Vec3f(12, 9, -20), MIRROR));
-    scene.objects.push_back(new Triangle(Vec3f(-8, -3, -20), Vec3f(12, 9, -20), Vec3f(-8, 9, -20), MIRROR));
+    // scene.objects.push_back(new Triangle(Vec3f(6, -2.9, -11.5), Vec3f(12, -2.9, -11.5), Vec3f(9, -2.9, -11.5 - 3 * sqrtf(3)), CYAN_RUBBER));
+    // scene.objects.push_back(new Triangle(Vec3f(6, -2.9, -11.5), Vec3f(12, -2.9, -11.5), Vec3f(9, -2.9 + 7, -11.5 - sqrtf(3)), CYAN_RUBBER));
+    // scene.objects.push_back(new Triangle(Vec3f(12, -2.9, -11.5), Vec3f(9, -2.9, -11.5 - 3 * sqrtf(3)), Vec3f(9, -2.9 + 7, -11.5 - sqrtf(3)), CYAN_RUBBER));
+    // scene.objects.push_back(new Triangle(Vec3f(6, -2.9, -11.5), Vec3f(9, -2.9 + 7, -11.5 - sqrtf(3)), Vec3f(9, -2.9, -11.5 - 3 * sqrtf(3)), CYAN_RUBBER));
+    for (auto&& t : createPyramid(Vec3f(9, -2.9 + 7, -11.5 - sqrtf(3)), 7, 6, CYAN_RUBBER))
+            scene.objects.push_back(t);
 
     scene.lights.push_back(Light(Vec3f(10, 25, -1), 3));
     scene.lights.push_back(Light(Vec3f(-6, 5, -6), 2));
+    scene.lights.push_back(Light(Vec3f(50, 5, -16.5), 0.5));
 
     Image image(camera.width, camera.height);
     render(image, camera, scene);
