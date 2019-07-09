@@ -14,8 +14,10 @@ struct Matrix {
     Matrix(const std::initializer_list<T> &l) { //...
         assert(l.size() == dimX * dimY);
         int index = 0;
-        for (auto&& e : l)
-            (*this)[index % dimX][index++ / dimX] = e;
+        for (auto&& e : l) {
+            (*this)[index / dimX][index % dimX] = e;
+            index++;
+        }
     }
     Vec<T, dimY>& operator[] (int index) {
         assert(index >= 0 && index < dimX);
