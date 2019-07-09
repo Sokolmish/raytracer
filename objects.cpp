@@ -106,12 +106,16 @@ std::vector<Triangle*> createQuadrangle(const Vec3f &p1, const Vec3f &p2, const 
     return t;
 }
 
-std::vector<Triangle*> createPyramid(const Vec3f &top, float height, float edge, const Material &mat) {
+std::vector<Triangle*> createPyramid(const Vec3f &top, float height, float edge, float angle, const Material &mat) {
     std::vector<Triangle*> t;
     float med_3 = edge / (2 * sqrtf(3)); //Length of median divided by 3
     Vec3f p1(top.x, top.y - height, top.z - med_3 * 2);
     Vec3f p2(top.x - edge / 2, top.y - height, top.z + med_3);
     Vec3f p3(top.x + edge / 2, top.y - height, top.z + med_3);
+    auto rot = MAT_ROT_Z(angle);
+    p1 = (rot * (p1 - top)) + top;
+    p2 = (rot * (p2 - top)) + top;
+    p3 = (rot * (p3 - top)) + top;
     t.push_back(new Triangle(p1, p2, p3, mat));
     t.push_back(new Triangle(p1, p2, top, mat));
     t.push_back(new Triangle(p2, p3, top, mat));

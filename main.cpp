@@ -79,8 +79,8 @@ Color traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene, int de
 }
 
 void render(Image &image, const Camera &camera, const Scene &scene) {
-    int xSh = -camera.width / 2;
-    int ySh = -camera.height / 2;
+    float xSh = -camera.width / 2;
+    float ySh = -camera.height / 2;
     #pragma omp parallel for
     for (int j = 0; j < camera.height; j++) {
         for (int i = 0; i < camera.width; i++) {
@@ -102,6 +102,8 @@ int main(int argc, char **argv) {
         toRad(90)           //FOV
     );
 
+    // scene.objects.push_back(new Sphere(Vec3f(5, 0, -15), 0.1, IVORY));
+
     scene.objects.push_back(new Sphere(Vec3f(0, 0, -14), 3, RED_RUBBER));
     scene.objects.push_back(new Sphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER));
     scene.objects.push_back(new Sphere(Vec3f(-4, 5, -15), 3, MIRROR));
@@ -113,16 +115,12 @@ int main(int argc, char **argv) {
     for (auto&& t : createQuadrangle(Vec3f(-8, -3, -20), Vec3f(15, -3, -20), Vec3f(15, 9, -20), Vec3f(-8, 9, -20), MIRROR))
         scene.objects.push_back(t);
 
-    // scene.objects.push_back(new Triangle(Vec3f(6, -2.9, -11.5), Vec3f(12, -2.9, -11.5), Vec3f(9, -2.9, -11.5 - 3 * sqrtf(3)), CYAN_RUBBER));
-    // scene.objects.push_back(new Triangle(Vec3f(6, -2.9, -11.5), Vec3f(12, -2.9, -11.5), Vec3f(9, -2.9 + 7, -11.5 - sqrtf(3)), CYAN_RUBBER));
-    // scene.objects.push_back(new Triangle(Vec3f(12, -2.9, -11.5), Vec3f(9, -2.9, -11.5 - 3 * sqrtf(3)), Vec3f(9, -2.9 + 7, -11.5 - sqrtf(3)), CYAN_RUBBER));
-    // scene.objects.push_back(new Triangle(Vec3f(6, -2.9, -11.5), Vec3f(9, -2.9 + 7, -11.5 - sqrtf(3)), Vec3f(9, -2.9, -11.5 - 3 * sqrtf(3)), CYAN_RUBBER));
-    for (auto&& t : createPyramid(Vec3f(9, -2.9 + 7, -11.5 - sqrtf(3)), 7, 6, CYAN_RUBBER))
+    for (auto&& t : createPyramid(Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER))
             scene.objects.push_back(t);
 
     scene.lights.push_back(Light(Vec3f(10, 25, -1), 3));
     scene.lights.push_back(Light(Vec3f(-6, 5, -6), 2));
-    scene.lights.push_back(Light(Vec3f(50, 5, -16.5), 0.5));
+    scene.lights.push_back(Light(Vec3f(5, 20, -15), 0.5));
 
     Image image(camera.width, camera.height);
     render(image, camera, scene);

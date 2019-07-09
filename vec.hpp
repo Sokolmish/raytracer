@@ -204,33 +204,33 @@ Vec<T, dim> operator- (const Vec<T, dim> &lhs, const Vec<T, dim> &rhs) {
 
 template <typename T, int dim>
 Vec<T, dim> operator- (const Vec<T, dim> &rhs) {
-    return Vec<T, dim>(rhs) * (-1);
+    return Vec<T, dim>(rhs) * (T) (-1);
 }
 
 //Muliply and division by number
-template <typename T, int dim, typename U>
-Vec<T, dim> operator* (const Vec<T, dim> &lhs, const U &rhs) {
+template <typename T, int dim>
+Vec<T, dim> operator* (const Vec<T, dim> &lhs, const T &rhs) {
     Vec<T, dim> t = Vec<T, dim>(lhs);
     for (int i = 0; i < dim; i++)
-        t[i] *= (T) rhs;
+        t[i] *= rhs;
     return t;
 }
 
-template <typename T, int dim, typename U>
-Vec<T, dim> operator/ (const Vec<T, dim> &lhs, const U &rhs) {
+template <typename T, int dim>
+Vec<T, dim> operator/ (const Vec<T, dim> &lhs, const T &rhs) {
     Vec<T, dim> t = Vec<T, dim>(lhs);
     for (int i = 0; i < dim; i++)
-        t[i] /= (T) rhs;
+        t[i] /= rhs;
     return t;
 }
 
-template <typename T, int dim, typename U>
-Vec<T, dim> operator* (const U &lhs, const Vec<T, dim> &rhs) {
+template <typename T, int dim>
+Vec<T, dim> operator* (const T &lhs, const Vec<T, dim> &rhs) {
     return rhs * lhs;
 }
 
-template <typename T, int dim, typename U>
-Vec<T, dim> operator/ (const U &lhs, const Vec<T, dim> &rhs) {
+template <typename T, int dim>
+Vec<T, dim> operator/ (const T &lhs, const Vec<T, dim> &rhs) {
     return rhs / lhs;
 }
 

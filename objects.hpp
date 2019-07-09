@@ -83,6 +83,6 @@ public:
 
 std::vector<Triangle*> createQuadrangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Vec3f &p4, const Material &mat);
 
-std::vector<Triangle*> createPyramid(const Vec3f &top, float height, float edge, const Material &mat); //Right triangular pyramid
+std::vector<Triangle*> createPyramid(const Vec3f &top, float height, float edge, float angle, const Material &mat); //Right triangular pyramid
 
 #endif
