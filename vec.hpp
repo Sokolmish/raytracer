@@ -3,188 +3,261 @@
 
 #include <cstring>
 #include <cmath>
+#include <cassert>
+#include <initializer_list>
 
 template <typename T, int dim>
-class Vec {
-private:
+struct Vec {
     T data[dim];
-
-    template<typename U, int D>
-    friend Vec<U, D> operator* (U lhs, const Vec<U, D> &rhs);
-public:
-    Vec();
-    Vec(T a1, T a2, T a3); //Change it to specialization 
-    Vec(T a1, T a2, T a3, T a4); //Change it to specialization 
-
-    T& operator[] (int ind);
-    const T& operator[] (int ind) const;
-
-    Vec<T, dim>& operator+= (const Vec<T, dim>& rhs);
-    Vec<T, dim>& operator-= (const Vec<T, dim>& rhs);
-    Vec<T, dim>& operator*= (T rhs);
-    Vec<T, dim>& operator/= (T rhs);
-
-    Vec<T, dim> operator+ (const Vec<T, dim>& rhs) const;
-    Vec<T, dim> operator- (const Vec<T, dim>& rhs) const;
-    Vec<T, dim> operator* (T rhs) const;
-    Vec<T, dim> operator/ (T rhs) const;
-
-    Vec<T, dim> operator- () const;
-
-    T operator* (const Vec<T, dim>& rhs) const; //Dot product
-    Vec<T, dim> operator^ (const Vec<T, dim>& rhs) const; //Cross product
-
-    T length() const;
-    Vec<T, dim> normalize() const;
+    //Constructors
+    Vec() {
+        std::memset(data, 0, dim);
+    }
+    Vec(const std::initializer_list<T> &l) { //...
+        assert(l.size == dim);
+        int index = 0;
+        for (auto&& e : l)
+            operator[] (index++) = e;
+    }
+    //Indexation
+    T& operator[] (int index) {
+        assert(index < dim && index >= 0);
+        return data[index];
+    }
+    const T& operator[] (int index) const {
+        return operator[] (index);
+    }
+    //Length and normalization
+    float length() const {
+        T t = 0;
+        for (int i = 0; i < dim; i++)
+            t += data[i] * data[i];
+        sqrtf(t);
+    }
+    Vec<T, dim> normalize() const {
+        return (*this) / length();
+    }
 };
 
-//Constructors
+template <typename T>
+struct Vec<T, 2> {
+    T x, y;
+    //Constructors
+    Vec() {
+        x = y = 0;
+    }
+    Vec(const std::initializer_list<T> &l) { //...
+        assert(l.size == 3);
+        int index = 0;
+        for (auto&& e : l)
+            operator[] (index++) = e;
+    }
+    Vec(const T &x, const T &y, const T &z) {
+        this->x = x;
+        this->y = y;
+    }
+    //Indexation
+    T& operator[] (int index) {
+        assert(index < 2 && index >= 0);
+        if (index == 0)
+            return x;
+        else //index == 1
+            return y;
+    }
+    const T& operator[] (int index) const {
+        assert(index < 2 && index >= 0);
+        if (index == 0)
+            return x;
+        else //index == 1
+            return y;
+    }
+    //Length and normalization
+    float length() const {
+        return sqrtf(x * x + y * y);
+    }
+    Vec<T, 2> normalize() const {
+        return (*this) / length();
+    }
+};
 
+template <typename T>
+struct Vec<T, 3> {
+    T x, y, z;
+    //Constructors
+    Vec() {
+        x = y = z = 0;
+    }
+    Vec(const std::initializer_list<T> &l) { //...
+        assert(l.size == 3);
+        int index = 0;
+        for (auto&& e : l)
+            operator[] (index++) = e;
+    }
+    Vec(const T &x, const T &y, const T &z) {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+    }
+    //Indexation
+    T& operator[] (int index) {
+        assert(index < 3 && index >= 0);
+        if (index == 0)
+            return x;
+        else if (index == 1)
+            return y;
+        else //index == 2
+            return z;
+    }
+    const T& operator[] (int index) const {
+        assert(index < 3 && index >= 0);
+        if (index == 0)
+            return x;
+        else if (index == 1)
+            return y;
+        else //index == 2
+            return z;
+    }
+    //Length and normalization
+    float length() const {
+        return sqrtf(x * x + y * y + z * z);
+    }
+    Vec<T, 3> normalize() const {
+        return (*this) / length();
+    }
+    //Cross product
+    Vec<T, 3> operator^ (const Vec<T, 3> &rhs) const {
+        return Vec<T, 3>(
+            y * rhs.z - z * rhs.y,
+            z * rhs.x - x * rhs.z,
+            x * rhs.y - y * rhs.x
+        );
+    }
+};
+
+template <typename T>
+struct Vec<T, 4> {
+    T x, y, z, w;
+    //Constructors
+    Vec() {
+        x = y = z = w = 0;
+    }
+    Vec(const std::initializer_list<T> &l) { //...
+        assert(l.size == 3);
+        int index = 0;
+        for (auto&& e : l)
+            operator[] (index++) = e;
+    }
+    Vec(const T &x, const T &y, const T &z, const T &w) {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+        this->w = w;
+    }
+    //Indexation
+    T& operator[] (int index) {
+        assert(index < 4 && index >= 0);
+        if (index == 0)
+            return x;
+        else if (index == 1)
+            return y;
+        else if (index == 2)
+            return z;
+        else //index == 3
+            return w;
+    }
+    const T& operator[] (int index) const {
+        assert(index < 4 && index >= 0);
+        if (index == 0)
+            return x;
+        else if (index == 1)
+            return y;
+        else if (index == 2)
+            return z;
+        else //index == 3
+            return w;
+    }
+    //Length and normalization
+    float length() const {
+        return sqrtf(x * x + y * y + z * z + w * w);
+    }
+    Vec<T, 4> normalize() const {
+        return (*this) / length();
+    }
+};
+
+//Addition and Subtraction
 template <typename T, int dim>
-Vec<T, dim>::Vec() {
+Vec<T, dim> operator+ (const Vec<T, dim> &lhs, const Vec<T, dim> &rhs) {
+    Vec<T, dim> t;
     for (int i = 0; i < dim; i++)
-        data[i] = 0;
-}
-
-template <typename T, int dim>
-Vec<T, dim>::Vec(T a1, T a2, T a3) {
-    if (dim != 3)
-        throw;
-    data[0] = a1;
-    data[1] = a2;
-    data[2] = a3;
-}
-
-template <typename T, int dim>
-Vec<T, dim>::Vec(T a1, T a2, T a3, T a4) {
-    if (dim != 4)
-        throw;
-    data[0] = a1;
-    data[1] = a2;
-    data[2] = a3;
-    data[3] = a4;
-}
-
-//Indexation
-
-template <typename T, int dim>
-T& Vec<T, dim>::operator[] (int ind) {
-    return data[ind];
-}
-
-template <typename T, int dim>
-const T& Vec<T, dim>::operator[] (int ind) const {
-    return data[ind];
-}
-
-//Compound assigment
-
-template <typename T, int dim>
-Vec<T, dim>& Vec<T, dim>::operator+= (const Vec<T, dim>& rhs) {
-    for (int i = 0; i < dim; i++)
-        data[i] += rhs.data[i];
-    return *this;
-}
-
-template <typename T, int dim>
-Vec<T, dim>& Vec<T, dim>::operator-= (const Vec<T, dim>& rhs) {
-    for (int i = 0; i < dim; i++)
-        data[i] -= rhs.data[i];
-    return *this;
-}
-
-template <typename T, int dim>
-Vec<T, dim>& Vec<T, dim>::operator*= (T rhs) {
-    for (int i = 0; i < dim; i++)
-        data[i] *= rhs;
-    return *this;
-}
-
-template <typename T, int dim>
-Vec<T, dim>& Vec<T, dim>::operator/= (T rhs) {
-    for (int i = 0; i < dim; i++)
-        data[i] /= rhs;
-    return *this;
-}
-
-//Arithmetic
-
-template <typename T, int dim>
-Vec<T, dim> Vec<T, dim>::operator+ (const Vec<T, dim>& rhs) const {
-    return Vec<T, dim>(*this) += rhs;
-}
-
-template <typename T, int dim>
-Vec<T, dim> Vec<T, dim>::operator- (const Vec<T, dim>& rhs) const {
-    return Vec<T, dim>(*this) -= rhs;
-}
-
-template <typename T, int dim>
-Vec<T, dim> Vec<T, dim>::operator* (T rhs) const {
-    return Vec<T, dim>(*this) *= rhs;
-}
-
-template <typename T, int dim>
-Vec<T, dim> Vec<T, dim>::operator/ (T rhs) const {
-    return Vec<T, dim>(*this) /= rhs;
-}
-
-template <typename T, int dim>
-Vec<T, dim> Vec<T, dim>::operator-() const {
-    return Vec<T, dim>(*this) * -1;
-}
-
-//Products
-
-template <typename T, int dim>
-T Vec<T, dim>::operator* (const Vec<T, dim>& rhs) const {
-    T t = 0;
-    for (int i = 0; i < dim; i++)
-        t += data[i] * rhs.data[i];
+        t[i] = lhs[i] + rhs[i];
     return t;
 }
 
 template <typename T, int dim>
-Vec<T, dim> Vec<T, dim>::operator^ (const Vec<T, dim>& rhs) const {
-    if (dim != 3)
-        throw "NOT_IMPLEMENTED"; //Or not defined, I don't know...
-    return Vec<T, dim>(
-        data[1] * rhs.data[2] - data[2] * rhs.data[1],
-        data[2] * rhs.data[0] - data[0] * rhs.data[2],
-        data[0] * rhs.data[1] - data[1] * rhs.data[0]
-    );
-}
-
-//Euclidean operations
-
-template <typename T, int dim>
-T Vec<T, dim>::length() const {
-    T t = 0;
+Vec<T, dim> operator- (const Vec<T, dim> &lhs, const Vec<T, dim> &rhs) {
+    Vec<T, dim> t;
     for (int i = 0; i < dim; i++)
-        t += data[i] * data[i];
-    return sqrt(t);
+        t[i] = lhs[i] - rhs[i];
+    return t;
 }
 
 template <typename T, int dim>
-Vec<T, dim> Vec<T, dim>::normalize() const {
-    return Vec<T, dim>(*this) /= length();
+Vec<T, dim> operator- (const Vec<T, dim> &rhs) {
+    return Vec<T, dim>(rhs) * (-1);
 }
 
-//Friend operations
+//Muliply and division by number
+template <typename T, int dim, typename U>
+Vec<T, dim> operator* (const Vec<T, dim> &lhs, const U &rhs) {
+    Vec<T, dim> t = Vec<T, dim>(lhs);
+    for (int i = 0; i < dim; i++)
+        t[i] *= (T) rhs;
+    return t;
+}
 
-template <typename U, int D>
-Vec<U, D> operator* (U lhs, const Vec<U, D> &rhs) {
+template <typename T, int dim, typename U>
+Vec<T, dim> operator/ (const Vec<T, dim> &lhs, const U &rhs) {
+    Vec<T, dim> t = Vec<T, dim>(lhs);
+    for (int i = 0; i < dim; i++)
+        t[i] /= (T) rhs;
+    return t;
+}
+
+template <typename T, int dim, typename U>
+Vec<T, dim> operator* (const U &lhs, const Vec<T, dim> &rhs) {
     return rhs * lhs;
 }
 
+template <typename T, int dim, typename U>
+Vec<T, dim> operator/ (const U &lhs, const Vec<T, dim> &rhs) {
+    return rhs / lhs;
+}
+
+//Dot product
+template <typename T, int dim>
+T operator* (const Vec<T, dim> &lhs, const Vec<T, dim> &rhs) {
+    T t = 0;
+    for (int i = 0; i < dim; i++)
+        t += lhs[i] * rhs[i];
+    return t;
+}
+
+//Definitions
+
+typedef Vec<int, 2> Vec2i;
+typedef Vec<float, 2> Vec2f;
+typedef Vec<double, 2> Vec2d;
+typedef Vec<long double, 2> Vec2l;
 
 typedef Vec<int, 3> Vec3i;
 typedef Vec<float, 3> Vec3f;
 typedef Vec<double, 3> Vec3d;
+typedef Vec<long double, 3> Vec3l;
 
 typedef Vec<int, 4> Vec4i;
 typedef Vec<float, 4> Vec4f;
 typedef Vec<double, 4> Vec4d;
-
+typedef Vec<long double, 4> Vec4l;
 
 #endif
