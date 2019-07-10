@@ -42,6 +42,16 @@ AABBbox AABBbox::expand(const AABBbox &box) const {
     return t;
 }
 
+bool AABBbox::intersect(const AABBbox &box) const {
+    if (B.x < box.A.x || A.x > box.B.x) 
+        return false;
+    if (B.y < box.A.y || A.y > box.B.y) 
+        return false;
+    if (B.z < box.A.z || A.z > box.B.z) 
+        return false;
+    return true;
+}
+
 // SPHERE
 
 Sphere::Sphere(const Vec3f &center, float radius, const Material &mat) : 

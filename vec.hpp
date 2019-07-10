@@ -33,7 +33,7 @@ struct Vec {
         T t = 0;
         for (int i = 0; i < dim; i++)
             t += data[i] * data[i];
-        sqrtf(t);
+        return sqrtf(t);
     }
     Vec<T, dim> normalize() const {
         return (*this) / length();

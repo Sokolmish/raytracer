@@ -16,16 +16,10 @@
 #define OBJECTS_IN_LEAF 3
 
 float getIntersection(const Vec3f &origin, const Vec3f &dir, const Scene &scene, VolumeObj **out) {
+    if (scene.getKDTree().isIntersect(origin, dir))
+        return scene.getKDTree().getIntersection(origin, dir, out);
     *out = NULL;
-    float len = __FLT_MAX__;
-    for (auto&& obj : scene.getObjects()) {
-        float t = obj->intersect(origin, dir);
-        if (t >= 0 && t < len) {
-            *out = obj;
-            len = t;
-        }
-    }
-    return len;
+    return 0;
 }
 
 Color traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene, int depth) {
@@ -82,7 +76,7 @@ Color traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene, int de
 void render(Image &image, const Camera &camera, const Scene &scene) {
     float xSh = -camera.width / 2;
     float ySh = -camera.height / 2;
-    #pragma omp parallel for collapse(2)
+    // #pragma omp parallel for collapse(2) //Temporary slow down the program ¯\_(ツ)_/¯
     for (int j = 0; j < camera.height; j++) {
         for (int i = 0; i < camera.width; i++) {
             Vec3f curDir = (camera.dir * camera.depth + camera.up * (ySh + j) + camera.right * (xSh + i)).normalize();
@@ -91,12 +85,12 @@ void render(Image &image, const Camera &camera, const Scene &scene) {
     }
 }
 
-int main(int argc, char **argv) {
+int main() {
     uint64_t time = clock();
     Scene scene;
 
     Camera camera(
-        1280, 720,          //Resolution
+        RES_720p            //Resolution
         Vec3f(3, 4, 3),     //Position
         Vec3f(0, 0, -1),    //Direction of view
         Vec3f(0, 1, 0),     //Vertical direction
@@ -112,6 +106,7 @@ int main(int argc, char **argv) {
     scene.addObject(createQuadrangle(Vec3f(-8, -3, -20), Vec3f(15, -3, -20), Vec3f(15, 9, -20), Vec3f(-8, 9, -20), MIRROR));
 
     scene.addObject(createSerpinsky(2, Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
+    // scene.addObject(createPyramid(Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
 
     scene.addLight(Light(Vec3f(10, 25, -1), 3));
     scene.addLight(Light(Vec3f(-6, 5, -6), 2));

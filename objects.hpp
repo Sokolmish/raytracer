@@ -3,23 +3,35 @@
 
 #include "util.hpp"
 
+struct Light {
+    Vec3f loc;
+    float power;
+    Light(Vec3f loc, float power) {
+        this->loc = loc;
+        this->power = power;
+    }
+};
+
 struct AABBbox {
     Vec3f A, B;
     AABBbox() = default;
     AABBbox(const Vec3f &A, const Vec3f &b);
     bool intersect(const Vec3f &origin, const Vec3f &dir) const;
+    bool intersect(const AABBbox &box) const;
     AABBbox expand(const AABBbox &box) const;
 };
 
+
 class VolumeObj {
 public:
+    virtual ~VolumeObj() = default;
+
     virtual float intersect(const Vec3f &origin, const Vec3f &dir) const = 0;
     virtual Vec3f normal(const Vec3f &touch) const = 0;
     virtual Material material(const Vec3f &touch) const = 0;
 
     virtual AABBbox boundingBox() const = 0;
 };
-
 
 class Sphere : public VolumeObj {
 private:
