@@ -25,7 +25,8 @@ struct Vec {
         return data[index];
     }
     const T& operator[] (int index) const {
-        return operator[] (index);
+        assert(index < dim && index >= 0);
+        return data[index];
     }
     //Length and normalization
     float length() const {

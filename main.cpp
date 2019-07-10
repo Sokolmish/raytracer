@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
     Scene scene;
 
     Camera camera(
-        RES_HD              //Resolution
+        1280, 720,              //Resolution
         Vec3f(3, 4, 3),     //Position
         Vec3f(0, 0, -1),    //Direction of view
         Vec3f(0, 1, 0),     //Vertical direction
