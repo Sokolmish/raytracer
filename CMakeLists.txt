@@ -10,9 +10,11 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 
 set(SOURCES 
-        main.cpp 
+        main.cpp
         image.cpp
+        scene.cpp
         objects.cpp
+        kdtree.cpp
         util.cpp
 )
 

@@ -1,8 +1,12 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
+#include <string>
 #include <cmath>
 #include <algorithm>
+#include <vector>
+#include <initializer_list>
+
 #include "vec.hpp"
 #include "matrix.hpp"
 
@@ -18,6 +22,16 @@ Vec3f getRefraction(const Vec3f &dir, const Vec3f &normal, float coeff);
 
 typedef Vec3f Color;
 
+struct Material {
+    float refractive_index;
+    Vec4f albedo;
+    Color diffuse_color;
+    float specular_exponent;
+    Material() = default;
+    Material(const float r, const Vec4f &a, const Color &color, const float spec) : 
+        refractive_index(r), albedo(a), diffuse_color(color), specular_exponent(spec) {}
+};
+
 #define WHITE       Color(255, 255, 255)
 #define BLACK       Color(0, 0, 0)
 #define RED         Color(255, 0, 0)
@@ -29,7 +43,6 @@ typedef Vec3f Color;
 #define GRAY        Color(128, 128, 128)
 #define LIGHT_GRAY  Color(192, 192, 192)
 #define LIGHT_BLUE  Color(173, 216, 230)
-
 
 #define IVORY           Material(1.0, Vec4f(0.6,  0.3, 0.1, 0.0), Vec3f(102, 102, 77 ),  50.f)
 #define GLASS           Material(1.5, Vec4f(0.0,  0.5, 0.1, 0.8), Vec3f(153, 179, 204),  125.f)

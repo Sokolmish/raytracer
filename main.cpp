@@ -6,18 +6,19 @@
 // #include <GL/freeglut.h>
 
 #include "image.hpp"
-#include "util.hpp"
-#include "objects.hpp"
+#include "scene.hpp"
 
 #define FILENAME "./output/output.bmp"
 
 #define BACKGROUND LIGHT_BLUE //Later background will be changed to skybox
 #define MAX_DEPTH 5
+#define MAX_KDTREE_DEPTH 10
+#define OBJECTS_IN_LEAF 3
 
-float getIntersection(const Vec3f &origin, const Vec3f &dir, const std::vector<VolumeObj*> &objects, VolumeObj **out) {
+float getIntersection(const Vec3f &origin, const Vec3f &dir, const Scene &scene, VolumeObj **out) {
     *out = NULL;
     float len = __FLT_MAX__;
-    for (auto&& obj : objects) {
+    for (auto&& obj : scene.getObjects()) {
         float t = obj->intersect(origin, dir);
         if (t >= 0 && t < len) {
             *out = obj;
@@ -32,7 +33,7 @@ Color traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene, int de
         return BACKGROUND;
 
     VolumeObj *_target;
-    float tLen = getIntersection(origin, dir, scene.objects, &_target);
+    float tLen = getIntersection(origin, dir, scene, &_target);
 
     if (_target == NULL)
         return BACKGROUND;
@@ -56,11 +57,11 @@ Color traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene, int de
     
     float diffIntense = 0.f;
     float specIntense = 0.f;
-    for (auto&& light : scene.lights) {
+    for (auto&& light : scene.getLights()) {
         Vec3f lDir = (light.loc - touch).normalize(); //Light direction
         Vec3f lightTouch = getNearPoint(touch, lDir, normal);
         VolumeObj *temp;
-        if (getIntersection(lightTouch, lDir, scene.objects, &temp) >= (light.loc - lightTouch).length() || temp == NULL) { //Dangerous!
+        if (getIntersection(lightTouch, lDir, scene, &temp) >= (light.loc - lightTouch).length() || temp == NULL) { //Dangerous!
             float tPower = lDir * target.normal(touch);
             if (tPower > 0)
                 diffIntense += tPower * light.power;
@@ -90,11 +91,6 @@ void render(Image &image, const Camera &camera, const Scene &scene) {
     }
 }
 
-void addTriangles(std::vector<VolumeObj*> &dest, const std::vector<Triangle*> &src) {
-    for (auto&& e : src)
-        dest.push_back(e);
-}
-
 int main(int argc, char **argv) {
     uint64_t time = clock();
     Scene scene;
@@ -107,28 +103,31 @@ int main(int argc, char **argv) {
         toRad(90)           //FOV
     );
 
-    // scene.objects.push_back(new Sphere(Vec3f(5, 0, -15), 0.1, IVORY));
+    scene.addObject(new Sphere(Vec3f(0, 0, -14), 3, RED_RUBBER));
+    scene.addObject(new Sphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER));
+    scene.addObject(new Sphere(Vec3f(-4, 5, -15), 3, MIRROR));
 
-    scene.objects.push_back(new Sphere(Vec3f(0, 0, -14), 3, RED_RUBBER));
-    scene.objects.push_back(new Sphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER));
-    scene.objects.push_back(new Sphere(Vec3f(-4, 5, -15), 3, MIRROR));
+    scene.addObject(createQuadrangle(Vec3f(-8, -3, -9), Vec3f(15, -3, -9), Vec3f(15, -3, -20), Vec3f(-8, -3, -20), GREEN_RUBBER));
+    scene.addObject(createQuadrangle(Vec3f(-8, -3, -9), Vec3f(-8, -3, -20), Vec3f(-8, 9, -20), Vec3f(-8, 9, -9), MIRROR));
+    scene.addObject(createQuadrangle(Vec3f(-8, -3, -20), Vec3f(15, -3, -20), Vec3f(15, 9, -20), Vec3f(-8, 9, -20), MIRROR));
 
-    addTriangles(scene.objects, createQuadrangle(Vec3f(-8, -3, -9), Vec3f(15, -3, -9), Vec3f(15, -3, -20), Vec3f(-8, -3, -20), GREEN_RUBBER));
-    addTriangles(scene.objects, createQuadrangle(Vec3f(-8, -3, -9), Vec3f(-8, -3, -20), Vec3f(-8, 9, -20), Vec3f(-8, 9, -9), MIRROR));
-    addTriangles(scene.objects, createQuadrangle(Vec3f(-8, -3, -20), Vec3f(15, -3, -20), Vec3f(15, 9, -20), Vec3f(-8, 9, -20), MIRROR));
+    scene.addObject(createSerpinsky(2, Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
 
-    addTriangles(scene.objects, createSerpinsky(2, Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
+    scene.addLight(Light(Vec3f(10, 25, -1), 3));
+    scene.addLight(Light(Vec3f(-6, 5, -6), 2));
+    scene.addLight(Light(Vec3f(5, 5, -15), 0.5));
 
-    scene.lights.push_back(Light(Vec3f(10, 25, -1), 3));
-    scene.lights.push_back(Light(Vec3f(-6, 5, -6), 2));
-    scene.lights.push_back(Light(Vec3f(5, 5, -15), 0.5));
+    scene.buildKDtree(MAX_KDTREE_DEPTH, OBJECTS_IN_LEAF);
+
+    std::cout << "Preparing time: " << (clock() - time) / (float) CLOCKS_PER_SEC << " seconds." << std::endl;
+    time = clock();
 
     Image image(camera.width, camera.height);
     render(image, camera, scene);
-    std::cout << "Time: " << (clock() - time) / (float) CLOCKS_PER_SEC << " seconds." << std::endl;
-    image.write(FILENAME);
 
-    for (auto&& t : scene.objects)
-        delete t;
+    std::cout << "Rendering time: " << (clock() - time) / (float) CLOCKS_PER_SEC << " seconds." << std::endl;
+
+    image.write(FILENAME);
+    scene.free();
     return 0;
 }

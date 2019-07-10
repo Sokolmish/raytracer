@@ -1,7 +1,6 @@
 #ifndef __IMAGE_H__
 #define __IMAGE_H__
 
-#include <string>
 #include "util.hpp"
 
 class Image {
