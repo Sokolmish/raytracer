@@ -94,10 +94,6 @@ template <typename T, int dimX, int dimY>
 Matrix<T, dimX, dimY> operator* (const T &lhs, const Matrix<T, dimX, dimY> &rhs) {
     return rhs * lhs;
 }
-template <typename T, int dimX, int dimY>
-Matrix<T, dimX, dimY> operator/ (const T &lhs, const Matrix<T, dimX, dimY> &rhs) {
-    return rhs / lhs;
-}
 
 //Multiply by vector
 template <typename T, int dim>

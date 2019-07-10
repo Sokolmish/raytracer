@@ -33,6 +33,13 @@ struct Material {
     }
 };
 
+struct AABBbox {
+    Vec3f A, B;
+    AABBbox(const Vec3f &A, const Vec3f &b);
+    bool intersect(const Vec3f &origin, const Vec3f &dir) const;
+};
+
+
 class VolumeObj {
 public:
     virtual float intersect(const Vec3f &origin, const Vec3f &dir) const = 0;
@@ -59,6 +66,7 @@ private:
     Vec3f center;
     float radius;
     Material mat;
+    AABBbox bbox;
 public:
     Sphere(const Vec3f &center, float radius, const Material &mat);
 
@@ -71,8 +79,8 @@ class Triangle : public VolumeObj {
 private:
     Vec3f p1, p2, p3;
     Material mat;
-
     Vec3f norm;
+    AABBbox bbox;
 public:
     Triangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Material &mat);
 
@@ -85,5 +93,4 @@ std::vector<Triangle*> createQuadrangle(const Vec3f &p1, const Vec3f &p2, const 
 
 std::vector<Triangle*> createPyramid(const Vec3f &top, float height, float edge, float angle, const Material &mat); //Right triangular pyramid
 std::vector<Triangle*> createSerpinsky(int depth, const Vec3f &top, float height, float edge, float angle, const Material &mat); //Serpinsky pyramid
-
 #endif

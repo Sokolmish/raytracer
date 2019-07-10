@@ -81,7 +81,7 @@ Color traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene, int de
 void render(Image &image, const Camera &camera, const Scene &scene) {
     float xSh = -camera.width / 2;
     float ySh = -camera.height / 2;
-    #pragma omp parallel for
+    #pragma omp parallel for collapse(2)
     for (int j = 0; j < camera.height; j++) {
         for (int i = 0; i < camera.width; i++) {
             Vec3f curDir = (camera.dir * camera.depth + camera.up * (ySh + j) + camera.right * (xSh + i)).normalize();
@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
     Scene scene;
 
     Camera camera(
-        1280, 720,              //Resolution
+        1280, 720,          //Resolution
         Vec3f(3, 4, 3),     //Position
         Vec3f(0, 0, -1),    //Direction of view
         Vec3f(0, 1, 0),     //Vertical direction

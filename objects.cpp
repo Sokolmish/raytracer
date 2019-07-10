@@ -25,30 +25,59 @@ Camera::Camera(int width, int height, const Vec3f &pos, const Vec3f &dir, const 
     this->right = this->dir ^ this->up;
 }
 
+//AABBbox
+
+AABBbox::AABBbox(const Vec3f &A, const Vec3f &B) {
+    this->A = A;
+    this->B = B;
+}
+
+bool AABBbox::intersect(const Vec3f &origin, const Vec3f &dir) const {
+    float lo = (A.x - origin.x) / dir.x;
+    float hi = (B.x - origin.x) / dir.x;
+    float tmin = std::min(lo, hi);
+    float tmax = std::max(lo, hi);
+    if (tmax < 0 || tmin > tmax)
+        return false;
+
+    lo = (A.y - origin.y) / dir.y;
+    hi = (B.y - origin.y) / dir.y;
+    tmin = std::max(tmin, std::min(lo, hi));
+    tmax = std::min(tmax, std::max(lo, hi));
+    if (tmax < 0 || tmin > tmax)
+        return false;
+
+    lo = (A.z - origin.z) / dir.z;
+    hi = (B.z - origin.z) / dir.z;
+    tmin = std::max(tmin, std::min(lo, hi));
+    tmax = std::min(tmax, std::max(lo, hi));
+    if (tmax < 0 || tmin > tmax)
+        return false;
+    return true;
+}
+
 // SPHERE
 
-Sphere::Sphere(const Vec3f &center, float radius, const Material &mat) {
+Sphere::Sphere(const Vec3f &center, float radius, const Material &mat) : 
+        bbox(center - radius * Vec3f(1, 1, 1), center + radius * Vec3f(1, 1, 1)) {
     this->center = center;
     this->radius = radius;
     this->mat = mat;
 }
 
 float Sphere::intersect(const Vec3f &origin, const Vec3f &dir) const {
-    Vec3f shC = origin - center;
-    float B = (shC * dir);
-    float C = (shC * shC) - radius * radius;
-    float D = B * B - C;
-
-    if (D < 0)
+    Vec3f L = center - origin;
+    float tca = L * dir;
+    float d2 = L * L - tca * tca;
+    if (d2 > radius * radius) 
         return -1.f;
-    else if (D - 0 < 1e-3)
-        return -B;
-    else {
-        float t1 = (-B + sqrtf(D));
-        float t2 = (-B - sqrtf(D));
-        // t1 higher than t2 (Wow!)
-        return t2 < 0 ? t1 : t2;
-    }
+    float thc = sqrtf(radius * radius - d2);
+    float t0 = tca - thc;
+    if (t0 < 0) 
+        t0 = tca + thc;
+    if (t0 < 0) 
+        return -1.f;
+    return t0;
 }
 
 Vec3f Sphere::normal(const Vec3f &touch) const {
@@ -61,7 +90,9 @@ Material Sphere::material(const Vec3f &touch) const {
 
 // TRIANGLE
 
-Triangle::Triangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Material &mat) {
+Triangle::Triangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Material &mat) :
+        bbox(   Vec3f(std::min({ p1.x, p2.x, p3.x }), std::min({ p1.y, p2.y, p3.y }), std::min({ p1.z, p2.z, p3.z })), 
+                Vec3f(std::max({ p1.x, p2.x, p3.x }), std::max({ p1.y, p2.y, p3.y }), std::max({ p1.z, p2.z, p3.z }))) {
     this->p1 = p1;
     this->p2 = p2;
     this->p3 = p3;
@@ -70,6 +101,8 @@ Triangle::Triangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Mate
 }
 
 float Triangle::intersect(const Vec3f &origin, const Vec3f &dir) const {
+    if (!bbox.intersect(origin, dir))
+        return -1.f;
     //Moller and Trumbore algorithm
     Vec3f e1 = p2 - p1;
     Vec3f e2 = p3 - p1;

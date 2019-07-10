@@ -232,7 +232,10 @@ Vec<T, dim> operator* (const T &lhs, const Vec<T, dim> &rhs) {
 
 template <typename T, int dim>
 Vec<T, dim> operator/ (const T &lhs, const Vec<T, dim> &rhs) {
-    return rhs / lhs;
+    Vec<T, dim> t = Vec<T, dim>();
+    for (int i = 0; i < dim; i++)
+        t[i] = rhs / lhs[i];
+    return t;
 }
 
 //Dot product
