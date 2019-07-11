@@ -12,8 +12,8 @@
 
 #define BACKGROUND LIGHT_BLUE //Later background will be changed to skybox
 #define MAX_DEPTH 5
-#define MAX_KDTREE_DEPTH 10
-#define OBJECTS_IN_LEAF 3
+#define MAX_KDTREE_DEPTH 5
+#define OBJECTS_IN_LEAF 5
 
 float getIntersection(const Vec3f &origin, const Vec3f &dir, const Scene &scene, VolumeObj **out) {
     if (scene.getKDTree().isIntersect(origin, dir))

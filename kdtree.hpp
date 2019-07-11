@@ -10,20 +10,15 @@
 class KDnode {
 private:
     AABBbox selfBox;
-    KDnode *l, *r;
+    KDnode *l, *r, *par;
     int plane;
     float coord;
-    std::vector<VolumeObj*> objs;
-
+    std::vector<VolumeObj*> objects;
+    int max_depth, nodes_in_leaf;
     friend class Scene;
 public:
     KDnode() = default;
-    KDnode(const AABBbox &self);
-    void setChilds(int plane, float coord, KDnode *left, KDnode *right);
-    bool hasL() const;
-    bool hasR() const;
-    const KDnode& getL() const;
-    const KDnode& getR() const;
+    KDnode(KDnode *par, const AABBbox &self, const std::vector<VolumeObj*> &objs, int depth, int leaf_c);
     bool isIntersect(const Vec3f &origin, const Vec3f &dir) const;
     float getIntersection(const Vec3f &origin, const Vec3f &dir, VolumeObj **out) const;
     void free();

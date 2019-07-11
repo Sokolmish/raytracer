@@ -1,31 +1,46 @@
 #include "kdtree.hpp"
 
-KDnode::KDnode(const AABBbox &self) {
-    selfBox = self;
+KDnode::KDnode(KDnode *par, const AABBbox &self, const std::vector<VolumeObj*> &objs, int depth, int leaf_c) {
+    //leaf_c - max number of objects in the leaf node
+    this->par = par;
     l = NULL;
     r = NULL;
-    objs = std::vector<VolumeObj*>();
-}
-
-void KDnode::setChilds(int plane, float coord, KDnode *left, KDnode *right) {
-    this->plane = plane;
-    this->coord = coord;
-    l = left;
-    r = right;
-}
-
-bool KDnode::hasL() const {
-    return l != NULL;
-}
-bool KDnode::hasR() const {
-    return r != NULL;
-}
-
-const KDnode& KDnode::getL() const {
-    return *l;
-}
-const KDnode& KDnode::getR() const {
-    return *r;
+    selfBox = self;
+    objects = objs;
+    if (depth > 0 && objects.size() >= leaf_c) {
+        float xside = selfBox.B.x - selfBox.A.x;
+        float yside = selfBox.B.y - selfBox.A.y;
+        float zside = selfBox.B.z - selfBox.A.z;
+        AABBbox lbox, rbox;
+        if (xside > std::max(yside, zside)) {
+            this->plane = PLANE_YZ;
+            this->coord = (selfBox.B.x + selfBox.A.x) / 2.f;
+            lbox = AABBbox(Vec3f(selfBox.A.x, selfBox.A.y, selfBox.A.z), Vec3f(coord, selfBox.B.y, selfBox.B.z));
+            rbox = AABBbox(Vec3f(coord, selfBox.A.y, selfBox.A.z), Vec3f(selfBox.B.x, selfBox.B.y, selfBox.B.z));
+        }
+        else if (yside > std::max(xside, zside)) {
+            this->plane = PLANE_XZ;
+            this->coord = (selfBox.B.y + selfBox.A.y) / 2.f;
+            lbox = AABBbox(Vec3f(selfBox.A.x, selfBox.A.y, selfBox.A.z), Vec3f(selfBox.B.x, coord, selfBox.B.z));
+            rbox = AABBbox(Vec3f(selfBox.A.x, coord, selfBox.A.z), Vec3f(selfBox.B.x, selfBox.B.y, selfBox.B.z));
+        }
+        else { //zside > std::max(xside, yside)
+            this->plane = PLANE_XY;
+            this->coord = (selfBox.B.z + selfBox.A.z) / 2.f;
+            lbox = AABBbox(Vec3f(selfBox.A.x, selfBox.A.y, selfBox.A.z), Vec3f(selfBox.B.x, selfBox.B.y, coord));
+            rbox = AABBbox(Vec3f(selfBox.A.x, selfBox.A.y, coord), Vec3f(selfBox.B.x, selfBox.B.y, selfBox.B.z));
+        }
+        std::vector<VolumeObj*> lObjs, rObjs;
+        for (auto&& e : objects) {
+            if (lbox.intersect(e->boundingBox()))
+                lObjs.push_back(e);
+            if (rbox.intersect(e->boundingBox()))
+                rObjs.push_back(e);
+        }
+        this->l = new KDnode(this, lbox, lObjs, depth - 1, leaf_c);
+        this->r = new KDnode(this, rbox, rObjs, depth - 1, leaf_c);
+        objects.clear();
+    }
 }
 
 bool KDnode::isIntersect(const Vec3f &origin, const Vec3f &dir) const {
@@ -66,7 +81,7 @@ float KDnode::getIntersection(const Vec3f &origin, const Vec3f &dir, VolumeObj *
 
             float t = first->getIntersection(origin, dir, out);
             float touchComp = origComp + t * dirComp;
-            if (left == (touchComp > coord)) { //(left && touchComp  > coord) || (!left && touchComp <= coord)
+            if (left == (touchComp > coord)) {
                 //if the touch point placed in other node (this is possible if the object contains in both nodes)
                 VolumeObj *o;
                 float t1 = second->getIntersection(origin, dir, &o);
@@ -92,7 +107,7 @@ float KDnode::getIntersection(const Vec3f &origin, const Vec3f &dir, VolumeObj *
     else { //leaf node
         *out = NULL;
         float len = __FLT_MAX__;
-        for (auto&& e : objs) {
+        for (auto&& e : this->objects) {
             float t = e->intersect(origin, dir);
             if (t >= 0 && t < len) {
                 *out = e;
