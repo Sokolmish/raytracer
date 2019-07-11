@@ -80,7 +80,7 @@ void Scene::buildKDtree(int max_depth, int leaf) { //leaf - maximum objects in l
     }
 
     for (auto&& t : objects) {
-        root.objs.push_back(t);
+        // root.objs.push_back(t);
         if (root.l->selfBox.intersect(t->boundingBox()))
             root.l->objs.push_back(t);
         if (root.r->selfBox.intersect(t->boundingBox()))

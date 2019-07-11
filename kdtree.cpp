@@ -37,18 +37,50 @@ float KDnode::getIntersection(const Vec3f &origin, const Vec3f &dir, VolumeObj *
         bool lin = l->isIntersect(origin, dir);
         bool rin = r->isIntersect(origin, dir);
         if (lin && rin) {
-            bool left;
-            VolumeObj *o1, *o2;
-            float t1 = l->getIntersection(origin, dir, &o1);
-            float t2 = r->getIntersection(origin, dir, &o2);
-            if (t1 <= t2) {
-                *out = o1;
-                return t1;
+            float origComp, dirComp; //Component of vector, that orthogonal to separating plane
+            if (plane == PLANE_XY) {
+                origComp = origin.z;
+                dirComp = dir.z;
+            }
+            else if (plane == PLANE_XZ) {
+                origComp = origin.y;
+                dirComp = dir.y;
             }
             else {
-                *out = o2;
-                return t2;
+                origComp = origin.x;
+                dirComp = dir.x;
             }
+            
+            KDnode *first, *second; //first and second nodes on the way of the ray
+            bool left;
+            if (origComp < coord) {
+                left = true;
+                first = l;
+                second = r;
+            }
+            else {
+                left = false;
+                first = r;
+                second = l;
+            }
+
+            float t = first->getIntersection(origin, dir, out);
+            float touchComp = origComp + t * dirComp;
+            if (left == (touchComp > coord)) { //(left && touchComp  > coord) || (!left && touchComp <= coord)
+                //if the touch point placed in other node (this is possible if the object contains in both nodes)
+                VolumeObj *o;
+                float t1 = second->getIntersection(origin, dir, &o);
+                if (t1 < t) {
+                    *out = o;
+                    return t1;
+                }
+                else
+                    return t;
+            }
+            if (*out != NULL) //if intersection was found in the first node and the object fully placed in that node
+                return t;
+            else //if intersection did not found in the first node that it loaceted in the second node
+                return second->getIntersection(origin, dir, out);
         }
         else {
             if (rin)
