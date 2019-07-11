@@ -15,20 +15,7 @@
 #define MAX_KD_LEAF 5
 #define KD_PARTS 10
 
-int main() {
-    Camera camera(
-        RES_720p,           //Resolution
-        Vec3f(3, 4, 3),     //Position
-        Vec3f(0, 0, -1),    //Direction of view
-        Vec3f(0, 1, 0),     //Vertical direction
-        toRad(90)           //FOV
-    );
-    Environment env(
-        LIGHT_BLUE          //Background
-    );
-    Scene scene;
-    
-
+void fillScene(Scene &scene) {
     scene.addObject(new Sphere(Vec3f(0, 0, -14), 3, RED_RUBBER));
     scene.addObject(new Sphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER));
     scene.addObject(new Sphere(Vec3f(-4, 5, -15), 3, MIRROR));
@@ -43,7 +30,21 @@ int main() {
     scene.addLight(Light(Vec3f(10, 25, -1), 3));
     scene.addLight(Light(Vec3f(-6, 5, -6), 2));
     scene.addLight(Light(Vec3f(5, 5, -15), 0.5));
+}
 
+int main() {
+    Camera camera(
+        RES_720p,           //Resolution
+        Vec3f(3, 4, 4),     //Position
+        Vec3f(0, 0, -1),    //Direction of view
+        Vec3f(0, 1, 0),     //Vertical direction
+        toRad(90)           //FOV
+    );
+    Environment env(
+        LIGHT_BLUE          //Background
+    );
+    Scene scene;
+    fillScene(scene);
 
     uint64_t time = clock();
     scene.buildKDtree(MAX_KD_DEPTH, MAX_KD_LEAF, KD_PARTS);
