@@ -11,34 +11,55 @@ KDnode::KDnode(KDnode *par, const AABBbox &self, const std::vector<VolumeObj*> &
         float xside = selfBox.B.x - selfBox.A.x;
         float yside = selfBox.B.y - selfBox.A.y;
         float zside = selfBox.B.z - selfBox.A.z;
-        AABBbox lbox, rbox;
+        Vec3f lbound, rbound;
+        float step;
+        Vec3f stepDir;
         if (xside > std::max(yside, zside)) {
             this->plane = PLANE_YZ;
-            this->coord = (selfBox.B.x + selfBox.A.x) / 2.f;
-            lbox = AABBbox(Vec3f(selfBox.A.x, selfBox.A.y, selfBox.A.z), Vec3f(coord, selfBox.B.y, selfBox.B.z));
-            rbox = AABBbox(Vec3f(coord, selfBox.A.y, selfBox.A.z), Vec3f(selfBox.B.x, selfBox.B.y, selfBox.B.z));
+            step = xside / 2.f;
+            stepDir = Vec3f(1, 0, 0);
         }
         else if (yside > std::max(xside, zside)) {
             this->plane = PLANE_XZ;
-            this->coord = (selfBox.B.y + selfBox.A.y) / 2.f;
-            lbox = AABBbox(Vec3f(selfBox.A.x, selfBox.A.y, selfBox.A.z), Vec3f(selfBox.B.x, coord, selfBox.B.z));
-            rbox = AABBbox(Vec3f(selfBox.A.x, coord, selfBox.A.z), Vec3f(selfBox.B.x, selfBox.B.y, selfBox.B.z));
+            step = yside / 2.f;
+            stepDir = Vec3f(0, 1, 0);
         }
         else { //zside > std::max(xside, yside)
             this->plane = PLANE_XY;
-            this->coord = (selfBox.B.z + selfBox.A.z) / 2.f;
-            lbox = AABBbox(Vec3f(selfBox.A.x, selfBox.A.y, selfBox.A.z), Vec3f(selfBox.B.x, selfBox.B.y, coord));
-            rbox = AABBbox(Vec3f(selfBox.A.x, selfBox.A.y, coord), Vec3f(selfBox.B.x, selfBox.B.y, selfBox.B.z));
+            step = zside / 2.f;
+            stepDir = Vec3f(0, 0, 1);
         }
         std::vector<VolumeObj*> lObjs, rObjs;
-        for (auto&& e : objects) {
-            if (lbox.intersect(e->boundingBox()))
-                lObjs.push_back(e);
-            if (rbox.intersect(e->boundingBox()))
-                rObjs.push_back(e);
+        int parts = 2;
+        int opti = 1;
+        float SAH = __FLT_MAX__;
+        for (int i = 1; i < parts; i++) {
+            std::vector<VolumeObj*> tlo, tro;
+            AABBbox lbox = AABBbox(selfBox.A, selfBox.B - (parts - i) * step * stepDir);
+            AABBbox rbox = AABBbox(selfBox.A + i * step * stepDir, selfBox.B);
+            for (auto&& e : objects) {
+                if (lbox.intersect(e->boundingBox()))
+                    tlo.push_back(e);
+                if (rbox.intersect(e->boundingBox()))
+                    tro.push_back(e);
+            }
+            float tSAH = i * tlo.size() + (parts - i) * tro.size();
+            if (SAH > tSAH) {
+                SAH = tSAH;
+                lObjs = tlo;
+                rObjs = tro;
+                opti = i;
+            }
         }
-        this->l = new KDnode(this, lbox, lObjs, depth - 1, leaf_c);
-        this->r = new KDnode(this, rbox, rObjs, depth - 1, leaf_c);
+        if (plane == PLANE_YZ)
+            coord = (selfBox.A.x + opti * step);
+        else if (plane == PLANE_XZ)
+            coord = (selfBox.A.y + opti * step);
+        else //if (plane = PLANE_XY)
+            coord = (selfBox.A.z + opti * step);
+
+        this->l = new KDnode(this, AABBbox(selfBox.A, selfBox.B - (parts - opti) * step * stepDir), lObjs, depth - 1, leaf_c);
+        this->r = new KDnode(this, AABBbox(selfBox.A + opti * step * stepDir, selfBox.B), rObjs, depth - 1, leaf_c);
         objects.clear();
     }
 }
