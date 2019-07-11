@@ -12,8 +12,10 @@
 
 #define BACKGROUND LIGHT_BLUE //Later background will be changed to skybox
 #define MAX_DEPTH 5
+
 #define MAX_KDTREE_DEPTH 5
 #define OBJECTS_IN_LEAF 5
+#define KD_PARTS 5
 
 float getIntersection(const Vec3f &origin, const Vec3f &dir, const Scene &scene, VolumeObj **out) {
     if (scene.getKDTree().isIntersect(origin, dir))
@@ -112,7 +114,7 @@ int main() {
     scene.addLight(Light(Vec3f(-6, 5, -6), 2));
     scene.addLight(Light(Vec3f(5, 5, -15), 0.5));
 
-    scene.buildKDtree(MAX_KDTREE_DEPTH, OBJECTS_IN_LEAF);
+    scene.buildKDtree(MAX_KDTREE_DEPTH, OBJECTS_IN_LEAF, KD_PARTS);
 
     std::cout << "Preparing time: " << (clock() - time) / (float) CLOCKS_PER_SEC << " seconds." << std::endl;
     time = clock();

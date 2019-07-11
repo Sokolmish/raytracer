@@ -23,7 +23,7 @@ public:
     void addLight(const Light &obj);
     const KDnode& getKDTree() const;
     const std::vector<Light>& getLights() const;
-    void buildKDtree(int max_depth, int leaf);
+    void buildKDtree(int max_depth, int leaf, int parts);
     void free();
 };
 

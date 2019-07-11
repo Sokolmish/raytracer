@@ -53,8 +53,8 @@ const std::vector<Light>& Scene::getLights() const {
     return lights;
 }
 
-void Scene::buildKDtree(int max_depth, int leaf) { //leaf - maximum objects in leaf
-    root = KDnode(NULL, globalBox, objects, max_depth, leaf);
+void Scene::buildKDtree(int max_depth, int leaf, int parts) { //leaf - maximum objects in leaf
+    root = KDnode(NULL, globalBox, objects, max_depth, leaf, parts);
 }
 
 void Scene::free() {

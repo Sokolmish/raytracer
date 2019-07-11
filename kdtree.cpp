@@ -1,6 +1,6 @@
 #include "kdtree.hpp"
 
-KDnode::KDnode(KDnode *par, const AABBbox &self, const std::vector<VolumeObj*> &objs, int depth, int leaf_c) {
+KDnode::KDnode(KDnode *par, const AABBbox &self, const std::vector<VolumeObj*> &objs, int depth, int leaf_c, int parts) {
     //leaf_c - max number of objects in the leaf node
     this->par = par;
     l = NULL;
@@ -16,21 +16,20 @@ KDnode::KDnode(KDnode *par, const AABBbox &self, const std::vector<VolumeObj*> &
         Vec3f stepDir;
         if (xside > std::max(yside, zside)) {
             this->plane = PLANE_YZ;
-            step = xside / 2.f;
+            step = xside / parts;
             stepDir = Vec3f(1, 0, 0);
         }
         else if (yside > std::max(xside, zside)) {
             this->plane = PLANE_XZ;
-            step = yside / 2.f;
+            step = yside / parts;
             stepDir = Vec3f(0, 1, 0);
         }
         else { //zside > std::max(xside, yside)
             this->plane = PLANE_XY;
-            step = zside / 2.f;
+            step = zside / parts;
             stepDir = Vec3f(0, 0, 1);
         }
         std::vector<VolumeObj*> lObjs, rObjs;
-        int parts = 2;
         int opti = 1;
         float SAH = __FLT_MAX__;
         for (int i = 1; i < parts; i++) {
@@ -58,8 +57,8 @@ KDnode::KDnode(KDnode *par, const AABBbox &self, const std::vector<VolumeObj*> &
         else //if (plane = PLANE_XY)
             coord = (selfBox.A.z + opti * step);
 
-        this->l = new KDnode(this, AABBbox(selfBox.A, selfBox.B - (parts - opti) * step * stepDir), lObjs, depth - 1, leaf_c);
-        this->r = new KDnode(this, AABBbox(selfBox.A + opti * step * stepDir, selfBox.B), rObjs, depth - 1, leaf_c);
+        this->l = new KDnode(this, AABBbox(selfBox.A, selfBox.B - (parts - opti) * step * stepDir), lObjs, depth - 1, leaf_c, parts);
+        this->r = new KDnode(this, AABBbox(selfBox.A + opti * step * stepDir, selfBox.B), rObjs, depth - 1, leaf_c, parts);
         objects.clear();
     }
 }
