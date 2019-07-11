@@ -16,10 +16,10 @@ Vec3f getNearPoint(const Vec3f &point, const Vec3f &ray, const Vec3f &normal);
 Vec3f getReflection(const Vec3f &dir, const Vec3f &normal);
 Vec3f getRefraction(const Vec3f &dir, const Vec3f &normal, float coeff);
 
-#define RES_8K 7680, 4320,
-#define RES_4K 3840, 2160,
-#define RES_1080p 1920, 1080,
-#define RES_720p 1280, 720,
+#define RES_8K 7680, 4320
+#define RES_4K 3840, 2160
+#define RES_1080p 1920, 1080
+#define RES_720p 1280, 720
 
 typedef Vec3f Color;
 

@@ -27,5 +27,12 @@ public:
     void free();
 };
 
+class Environment {
+private:
+    Color background;
+public:
+    Environment(Color b) : background(b) {};
+    Color getColor(const Vec3f &origin, const Vec3f &dir);
+};
 
 #endif

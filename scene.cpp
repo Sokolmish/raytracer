@@ -62,3 +62,7 @@ void Scene::free() {
         delete t;
     root.free();
 }
+
+Color Environment::getColor(const Vec3f &origin, const Vec3f &dir) {
+    return background;
+}

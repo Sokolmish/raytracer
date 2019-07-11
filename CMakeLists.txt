@@ -12,6 +12,7 @@ find_package(GLUT REQUIRED)
 
 set(SOURCES 
         main.cpp
+        render.cpp
         image.cpp
         scene.cpp
         objects.cpp
