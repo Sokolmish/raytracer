@@ -4,6 +4,8 @@
 #include "image.hpp"
 #include "scene.hpp"
 
+#define ALLIASING_EDGE 80
+
 class Render {
 private:
     Environment env;

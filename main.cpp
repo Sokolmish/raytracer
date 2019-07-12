@@ -58,6 +58,8 @@ int main() {
     std::cout << "Rendering: " << (clock() - time) / (float) CLOCKS_PER_SEC << " seconds." << std::endl;
 
     image.write(FILENAME);
+    
     scene.free();
+    image.free();
     return 0;
 }

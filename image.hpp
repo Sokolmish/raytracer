@@ -6,14 +6,10 @@
 class Image {
 private:
     int width, height;
-    unsigned char *data;
-
-    //Disabling copying ability
-    Image(const Image&) = delete;
-    void operator=(const Image&) = delete;
+    uint8_t *data;
 public:
     Image(int width, int height);
-    ~Image();
+    void free();
 
     void setPixel(int x, int y, const Color &color);
     Color getPixel(int x, int y) const;
