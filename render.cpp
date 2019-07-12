@@ -71,6 +71,7 @@ void Render::render(Image &image, const Camera &camera, const Scene &scene) {
 
     //Antialliasing
     uint8_t *grayImg = new uint8_t[camera.width * camera.height];
+    #pragma omp parallel for collapse(2)
     for (int j = 0; j < camera.height; j++) {
         for (int i = 0; i < camera.width; i++) {
             Color col = image.getPixel(i, j); //r = x, g = y, b = z
@@ -80,6 +81,7 @@ void Render::render(Image &image, const Camera &camera, const Scene &scene) {
     int gy[3][3] = {{-1, -2, -1}, {0, 0, 0}, {+1, +2, +1}}; //Sobel kernel
     int gx[3][3] = {{-1, 0, +1}, {-2, 0, +2}, {-1, 0, +1}};
     int *sobel = new int[camera.width * camera.height];
+    #pragma omp parallel for collapse(2)
     for (int j = 1; j < camera.height - 1; j++) {
         for (int i = 1; i < camera.width - 1; i++) {
             int nx = 0, ny = 0;
@@ -93,6 +95,7 @@ void Render::render(Image &image, const Camera &camera, const Scene &scene) {
         }
     }
     const float pix = 0.4f; //defines deviation of additional rays)
+    // #pragma omp parallel for collapse(2) //See above
     for (int j = 0; j < camera.height; j++) {
         for (int i = 0; i < camera.width; i++) {
             if (sobel[j * camera.width + i] > ALLIASING_EDGE) {
