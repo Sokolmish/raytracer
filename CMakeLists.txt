@@ -15,8 +15,9 @@ set(SOURCES
         render.cpp
         image.cpp
         scene.cpp
-        objects.cpp
         kdtree.cpp
+        objects.cpp
+        objectsSupport.cpp
         util.cpp
         objModel.cpp
 )

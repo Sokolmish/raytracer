@@ -2,11 +2,12 @@
 #define __SCENE_H__
 
 #include "kdtree.hpp"
+#include "light.hpp"
 
 struct Camera {
     Vec3f pos, dir, up, right;
     int width, height;
-    float depth, ratio, fov;
+    float depth, fov;
     Camera();
     Camera(int width, int height, const Vec3f &pos, const Vec3f &dir, const Vec3f &up, float fov);
 };
@@ -31,7 +32,7 @@ class Environment {
 private:
     Color background;
 public:
-    Environment(Color b) : background(b) {};
+    Environment(Color b) : background(b) {}
     Color getColor(const Vec3f &origin, const Vec3f &dir);
 };
 

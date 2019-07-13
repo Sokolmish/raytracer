@@ -1,5 +1,4 @@
 #include <iostream>
-#include <omp.h>
 #include <ctime>
 
 // #include <GL/freeglut.h>
@@ -32,7 +31,7 @@ void fillScene(Scene &scene) {
     scene.addLight(Light(Vec3f(5, 5, -15), 0.5));
 }
 
-int main() {
+int main() { //2.9 seconds
     Camera camera(
         RES_720p,           //Resolution
         Vec3f(3, 4, 4),     //Position

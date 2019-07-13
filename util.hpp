@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <vector>
 #include <initializer_list>
+#include <omp.h>
 
 #include "vec.hpp"
 #include "matrix.hpp"

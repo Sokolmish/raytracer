@@ -1,57 +1,5 @@
 #include "objects.hpp"
 
-//  AABB box
-
-AABBbox::AABBbox(const Vec3f &A, const Vec3f &B) {
-    this->A = A;
-    this->B = B;
-}
-
-bool AABBbox::intersect(const Vec3f &origin, const Vec3f &dir) const {
-    float lo = (A.x - origin.x) / dir.x;
-    float hi = (B.x - origin.x) / dir.x;
-    float tmin = std::min(lo, hi);
-    float tmax = std::max(lo, hi);
-    if (tmax < 0 || tmin > tmax)
-        return false;
-
-    lo = (A.y - origin.y) / dir.y;
-    hi = (B.y - origin.y) / dir.y;
-    tmin = std::max(tmin, std::min(lo, hi));
-    tmax = std::min(tmax, std::max(lo, hi));
-    if (tmax < 0 || tmin > tmax)
-        return false;
-
-    lo = (A.z - origin.z) / dir.z;
-    hi = (B.z - origin.z) / dir.z;
-    tmin = std::max(tmin, std::min(lo, hi));
-    tmax = std::min(tmax, std::max(lo, hi));
-    if (tmax < 0 || tmin > tmax)
-        return false;
-    return true;
-}
-
-AABBbox AABBbox::expand(const AABBbox &box) const {
-    AABBbox t;
-    t.A.x = std::min(A.x, box.A.x);
-    t.A.y = std::min(A.y, box.A.y);
-    t.A.z = std::min(A.z, box.A.z);
-    t.B.x = std::max(B.x, box.B.x);
-    t.B.y = std::max(B.y, box.B.y);
-    t.B.z = std::max(B.z, box.B.z);
-    return t;
-}
-
-bool AABBbox::intersect(const AABBbox &box) const {
-    if (B.x < box.A.x || A.x > box.B.x) 
-        return false;
-    if (B.y < box.A.y || A.y > box.B.y) 
-        return false;
-    if (B.z < box.A.z || A.z > box.B.z) 
-        return false;
-    return true;
-}
-
 // SPHERE
 
 Sphere::Sphere(const Vec3f &center, float radius, const Material &mat) : 
@@ -191,25 +139,9 @@ std::vector<VolumeObj*> createSerpinsky(int depth, const Vec3f &top, float heigh
     return t;
 }
 
-//Vertex and nTriangle
 
-Vertex::Vertex(Vec3f loc, Vec3f norm, Vec2f texture) {
-    this->loc = loc;
-    this->norm = norm;
-    this->texture = texture;
-}
 
-Vertex::Vertex(Vec3f loc, Vec3f norm) {
-    this->loc = loc;
-    this->norm = norm;
-    this->texture = texture;
-}
-
-Vertex::Vertex(Vec3f loc) {
-    this->loc = loc;
-    this->norm = norm;
-    this->texture = texture;
-}
+//nTriangle
 
 nTriangle::nTriangle(const Vertex &p1, const Vertex &p2, const Vertex &p3, const Material &mat) {
     this->p1 = p1;

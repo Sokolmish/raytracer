@@ -1,37 +1,7 @@
 #ifndef __OBJECTS_H__
 #define __OBJECTS_H__
 
-#include "util.hpp"
-
-struct Light {
-    Vec3f loc;
-    float power;
-    Light(Vec3f loc, float power) {
-        this->loc = loc;
-        this->power = power;
-    }
-};
-
-struct AABBbox {
-    Vec3f A, B;
-    AABBbox() = default;
-    AABBbox(const Vec3f &A, const Vec3f &b);
-    bool intersect(const Vec3f &origin, const Vec3f &dir) const;
-    bool intersect(const AABBbox &box) const;
-    AABBbox expand(const AABBbox &box) const;
-};
-
-
-class VolumeObj {
-public:
-    virtual ~VolumeObj() = default;
-
-    virtual float intersect(const Vec3f &origin, const Vec3f &dir) const = 0;
-    virtual Vec3f normal(const Vec3f &touch) const = 0;
-    virtual Material material(const Vec3f &touch) const = 0;
-
-    virtual AABBbox boundingBox() const = 0;
-};
+#include "objectsSupport.hpp"
 
 class Sphere : public VolumeObj {
 private:
@@ -69,17 +39,6 @@ std::vector<VolumeObj*> createQuadrangle(const Vec3f &p1, const Vec3f &p2, const
 
 std::vector<VolumeObj*> createPyramid(const Vec3f &top, float height, float edge, float angle, const Material &mat); //Right triangular pyramid
 std::vector<VolumeObj*> createSerpinsky(int depth, const Vec3f &top, float height, float edge, float angle, const Material &mat); //Serpinsky pyramid
-
-
-
-struct Vertex {
-    Vec3f loc, norm;
-    Vec2f texture;
-    Vertex(Vec3f loc, Vec3f norm, Vec2f texture);
-    Vertex(Vec3f loc, Vec3f norm);
-    Vertex(Vec3f loc);
-    Vertex() = default;
-};
 
 class nTriangle : public VolumeObj { //For easier migration from Vec3f vertices to Vertex vertices
 private:
