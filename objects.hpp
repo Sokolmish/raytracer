@@ -69,4 +69,31 @@ std::vector<VolumeObj*> createQuadrangle(const Vec3f &p1, const Vec3f &p2, const
 
 std::vector<VolumeObj*> createPyramid(const Vec3f &top, float height, float edge, float angle, const Material &mat); //Right triangular pyramid
 std::vector<VolumeObj*> createSerpinsky(int depth, const Vec3f &top, float height, float edge, float angle, const Material &mat); //Serpinsky pyramid
+
+
+
+struct Vertex {
+    Vec3f loc, norm;
+    Vec2f texture;
+    Vertex(Vec3f loc, Vec3f norm, Vec2f texture);
+    Vertex(Vec3f loc, Vec3f norm);
+    Vertex(Vec3f loc);
+    Vertex() = default;
+};
+
+class nTriangle : public VolumeObj { //For easier migration from Vec3f vertices to Vertex vertices
+private:
+    Vertex p1, p2, p3;
+    Material mat;
+    AABBbox bbox;
+public:
+    nTriangle(const Vertex &p1, const Vertex &p2, const Vertex &p3, const Material &mat);
+
+    float intersect(const Vec3f &origin, const Vec3f &dir) const;
+    Vec3f normal(const Vec3f &touch) const;
+    Material material(const Vec3f &touch) const;
+
+    AABBbox boundingBox() const;
+};
+
 #endif

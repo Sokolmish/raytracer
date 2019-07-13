@@ -53,7 +53,7 @@ struct Vec<T, 2> {
         for (auto&& e : l)
             operator[] (index++) = e;
     }
-    Vec(const T &x, const T &y, const T &z) {
+    Vec(const T &x, const T &y) {
         this->x = x;
         this->y = y;
     }

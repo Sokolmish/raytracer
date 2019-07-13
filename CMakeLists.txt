@@ -18,6 +18,7 @@ set(SOURCES
         objects.cpp
         kdtree.cpp
         util.cpp
+        objModel.cpp
 )
 
 add_executable(main ${SOURCES})
