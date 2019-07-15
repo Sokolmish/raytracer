@@ -120,7 +120,7 @@ std::vector<VolumeObj*> createSerpinsky(int depth, const Vec3f &top, float heigh
     p2 = (rot * (p2 - top)) + top;
     p3 = (rot * (p3 - top)) + top;
     if (depth == 0) {
-        t.push_back(new Triangle(p1, p2, p3, mat));
+        t.push_back(new Triangle(p3, p2, p1, mat));
         t.push_back(new Triangle(p1, p2, top, mat));
         t.push_back(new Triangle(p2, p3, top, mat));
         t.push_back(new Triangle(p3, p1, top, mat));
