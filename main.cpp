@@ -26,6 +26,8 @@ void fillScene(Scene &scene) {
     scene.addObject(createSerpinsky(3, Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
     // scene.addObject(createPyramid(Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
 
+    // scene.addObject(createSerpinsky(3, Vec3f(5, 10, -13), 10, 8, toRad(65), CYAN_RUBBER));
+
     scene.addLight(Light(Vec3f(10, 25, -1), 3));
     scene.addLight(Light(Vec3f(-6, 5, -6), 2));
     scene.addLight(Light(Vec3f(5, 5, -15), 0.5));
