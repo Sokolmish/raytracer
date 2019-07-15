@@ -20,7 +20,7 @@ public:
     KDnode() = default;
     KDnode(KDnode *par, const AABBbox &self, const std::vector<VolumeObj*> &objs, int depth, int leaf_c, int parts);
     bool isIntersect(const Vec3f &origin, const Vec3f &dir) const;
-    float getIntersection(const Vec3f &origin, const Vec3f &dir, VolumeObj **out) const;
+    Intersection getIntersection(const Vec3f &origin, const Vec3f &dir, bool needData) const;
     void free();
 };
 

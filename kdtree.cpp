@@ -67,7 +67,7 @@ bool KDnode::isIntersect(const Vec3f &origin, const Vec3f &dir) const {
     return selfBox.intersect(origin, dir);
 }
 
-float KDnode::getIntersection(const Vec3f &origin, const Vec3f &dir, VolumeObj **out) const {
+Intersection KDnode::getIntersection(const Vec3f &origin, const Vec3f &dir, bool needData) const {
     if (l != NULL) { // && (r != NULL)
         bool lin = l->isIntersect(origin, dir);
         bool rin = r->isIntersect(origin, dir);
@@ -99,42 +99,41 @@ float KDnode::getIntersection(const Vec3f &origin, const Vec3f &dir, VolumeObj *
                 second = l;
             }
 
-            float t = first->getIntersection(origin, dir, out);
-            float touchComp = origComp + t * dirComp;
+            Intersection t = first->getIntersection(origin, dir, needData);
+            float touchComp = origComp + t.len * dirComp;
             if (left == (touchComp > coord)) {
                 //if the touch point placed in other node (this is possible if the object contains in both nodes)
-                VolumeObj *o;
-                float t1 = second->getIntersection(origin, dir, &o);
-                if (t1 < t) {
-                    *out = o;
+                Intersection t1 = second->getIntersection(origin, dir, needData);
+                if (t1.len < t.len)
                     return t1;
-                }
                 else
                     return t;
             }
-            if (*out != NULL) //if intersection was found in the first node and the object fully placed in that node
+            if (t.state) //if intersection was found in the first node and the object fully placed in that node
                 return t;
             else //if intersection did not found in the first node that it loaceted in the second node
-                return second->getIntersection(origin, dir, out);
+                return second->getIntersection(origin, dir, needData);
         }
-        else {
+        else { // if (!(lin && rin))
             if (rin)
-                return r->getIntersection(origin, dir, out);
+                return r->getIntersection(origin, dir, needData);
             else //if (lin)
-                return l->getIntersection(origin, dir, out);
+                return l->getIntersection(origin, dir, needData);
         }
     }
     else { //leaf node
-        *out = NULL;
-        float len = __FLT_MAX__;
+        Intersection tInter(false, __FLT_MAX__);
         for (auto&& e : this->objects) {
-            float t = e->intersect(origin, dir);
-            if (t >= 0 && t < len) {
-                *out = e;
-                len = t;
-            }
+            Intersection t = e->getIntersection(origin, dir, needData);
+            if (t.state && t.len < tInter.len)
+                tInter = t;
         }
-        return len;
+        
+        if (tInter.state)
+            return tInter;
+        else 
+            return Intersection(false, 0.f);
+
     }
 }
 

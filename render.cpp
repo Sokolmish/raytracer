@@ -1,26 +1,22 @@
 #include "render.hpp"
 
-float Render::getIntersection(const Vec3f &origin, const Vec3f &dir, const Scene &scene, VolumeObj **out) {
+Intersection Render::getIntersection(const Vec3f &origin, const Vec3f &dir, const Scene &scene, bool needData) {
     if (scene.getKDTree().isIntersect(origin, dir))
-        return scene.getKDTree().getIntersection(origin, dir, out);
-    *out = NULL;
-    return 0;
+        return scene.getKDTree().getIntersection(origin, dir, needData);
+    return Intersection(false, 0.f);
 }
 
 Color Render::traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene, int depth) {
     if (depth >= max_ray_depth)
         return env.getColor(origin, dir);
 
-    VolumeObj *_target;
-    float tLen = getIntersection(origin, dir, scene, &_target);
-
-    if (_target == NULL)
+    Intersection inter = getIntersection(origin, dir, scene, true);
+    if (!inter.state)
         return env.getColor(origin, dir);
 
-    VolumeObj &target = *_target;
-    Vec3f touch = origin + tLen * dir;
-    Vec3f normal = target.normal(touch);
-    Material mat = target.material(touch);
+    Vec3f touch = inter.touch;
+    Vec3f normal = inter.normal;
+    Material mat = inter.mat;
 
     Color reflColor = BLACK, refrColor = BLACK; //Black don't affect to color in addition
     if (mat.albedo[2] >= 1e-3) {
@@ -39,9 +35,10 @@ Color Render::traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene
     for (auto&& light : scene.getLights()) {
         Vec3f lDir = (light.loc - touch).normalize(); //Light direction
         Vec3f lightTouch = getNearPoint(touch, lDir, normal);
-        VolumeObj *temp;
-        if (getIntersection(lightTouch, lDir, scene, &temp) >= (light.loc - lightTouch).length() || temp == NULL) { //Dangerous!
-            float tPower = lDir * target.normal(touch);
+        
+        Intersection lInter = getIntersection(lightTouch, lDir, scene, false);
+        if (!lInter.state || lInter.len >= (light.loc - lightTouch).length()) {
+            float tPower = lDir * normal;
             if (tPower > 0)
                 diffIntense += tPower * light.power;
 

@@ -11,7 +11,7 @@ private:
     Environment env;
     int max_ray_depth;
 
-    float getIntersection(const Vec3f &origin, const Vec3f &dir, const Scene &scene, VolumeObj **out);
+    Intersection getIntersection(const Vec3f &origin, const Vec3f &dir, const Scene &scene, bool needData);
     Color traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene, int depth);
 public:
     Render(const Environment &env, int m) : env(env), max_ray_depth(m) {};

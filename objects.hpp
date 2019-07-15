@@ -11,11 +11,7 @@ private:
     AABBbox bbox;
 public:
     Sphere(const Vec3f &center, float radius, const Material &mat);
-
-    float intersect(const Vec3f &origin, const Vec3f &dir) const;
-    Vec3f normal(const Vec3f &touch) const;
-    Material material(const Vec3f &touch) const;
-
+    Intersection getIntersection(const Vec3f &origin, const Vec3f &dir, bool needData) const;
     AABBbox boundingBox() const;
 };
 
@@ -27,18 +23,9 @@ private:
     AABBbox bbox;
 public:
     Triangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Material &mat);
-
-    float intersect(const Vec3f &origin, const Vec3f &dir) const;
-    Vec3f normal(const Vec3f &touch) const;
-    Material material(const Vec3f &touch) const;
-
+    Intersection getIntersection(const Vec3f &origin, const Vec3f &dir, bool needData) const;
     AABBbox boundingBox() const;
 };
-
-std::vector<VolumeObj*> createQuadrangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Vec3f &p4, const Material &mat);
-
-std::vector<VolumeObj*> createPyramid(const Vec3f &top, float height, float edge, float angle, const Material &mat); //Right triangular pyramid
-std::vector<VolumeObj*> createSerpinsky(int depth, const Vec3f &top, float height, float edge, float angle, const Material &mat); //Serpinsky pyramid
 
 class nTriangle : public VolumeObj { //For easier migration from Vec3f vertices to Vertex vertices
 private:
@@ -47,12 +34,13 @@ private:
     AABBbox bbox;
 public:
     nTriangle(const Vertex &p1, const Vertex &p2, const Vertex &p3, const Material &mat);
-
-    float intersect(const Vec3f &origin, const Vec3f &dir) const;
-    Vec3f normal(const Vec3f &touch) const;
-    Material material(const Vec3f &touch) const;
-
+    Intersection getIntersection(const Vec3f &origin, const Vec3f &dir, bool needData) const { } //TODO!!!
     AABBbox boundingBox() const;
 };
+
+std::vector<VolumeObj*> createQuadrangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Vec3f &p4, const Material &mat);
+
+std::vector<VolumeObj*> createPyramid(const Vec3f &top, float height, float edge, float angle, const Material &mat); //Right triangular pyramid
+std::vector<VolumeObj*> createSerpinsky(int depth, const Vec3f &top, float height, float edge, float angle, const Material &mat); //Serpinsky pyramid
 
 #endif
