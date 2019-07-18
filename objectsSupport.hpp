@@ -8,7 +8,7 @@ struct Vertex {
     Vec2f texture;
     Vertex(const Vec3f &loc, const Vec3f &n, const Vec2f &texture) : loc(loc), norm(n), texture(texture) {}
     Vertex(const Vec3f &loc, const Vec3f &norm): loc(loc), norm(norm), texture(Vec2f(0, 0)) {}
-    Vertex(const Vec3f &loc) : loc(loc), norm(loc), texture(Vec2f(0, 0)) {}
+    Vertex(const Vec3f &loc) : loc(loc), norm(Vec3f(0, 0, 0)), texture(Vec2f(0, 0)) {}
     Vertex() = default;
 };
 

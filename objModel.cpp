@@ -1,17 +1,36 @@
 #include "objModel.hpp"
 
+#include <fstream>
+#include <sstream>
 
-ObjModel::ObjModel(std::string str) {
-    auto it = str.begin();
-    auto end = str.end();
+ObjModel::ObjModel(const Vec3f &center, const std::string &path) : center(center) {
+    std::ifstream is(path);
+    std::ostringstream oss;
+    oss << is.rdbuf(); //TODO: better way to file reading?
+    is.close();
+    std::string str = oss.str();
 
-    vs.push_back(Vec3f(0, 0, 0));
+    strIter it = str.begin();
+    strIter end = str.end();
+
+    vs.push_back(this->center);
     vts.push_back(Vec2f(0, 0));
     vns.push_back(Vec3f(0, 0, 0));
+
+    while (it != end) {
+        if (*it == '\n')
+            it++;
+        else
+            scanLine(it, end);
+    }
 }
 
 bool ObjModel::checkAssertion(bool expr, std::string msg) {
     return expr;
+}
+
+const std::vector<VolumeObj*>& ObjModel::getObjects() const {
+    return this->objects;
 }
 
 //PARSER
@@ -50,7 +69,7 @@ void ObjModel::scanVertex(strIter &it, const strIter &end) {
             w = scanNumber(it, end);
             scanSpaces(it, end);
         }
-        this->vs.push_back(Vec3f(x, y, z));
+        this->vs.push_back(Vec3f(x, y, z) + center);
     }
     else if (*it == 't') { //Texture vertex (x, y, [w])
         it++;
@@ -85,9 +104,9 @@ void ObjModel::scanVertex(strIter &it, const strIter &end) {
 }
 
 void ObjModel::scanFace(strIter &it, const strIter &end) {
-    std::vector<int> vertices(3);
-    std::vector<int> textures(3);
-    std::vector<int> normals(3);
+    std::vector<int> vertices;
+    std::vector<int> textures;
+    std::vector<int> normals;
     bool hasT = false, hasN = false;
     it++;
     scanSpaces(it, end);
@@ -156,34 +175,50 @@ void ObjModel::scanFace(strIter &it, const strIter &end) {
     }
     
     for (int i = 1; i < vertices.size() - 1; i++) {
-        objects.push_back(new nTriangle(
-            Vertex(vs[vertices[0]], vns[normals[0]], vts[textures[0]]),
-            Vertex(vs[vertices[i]], vns[normals[i]], vts[textures[i]]),
-            Vertex(vs[vertices[i + 1]], vns[normals[i + 1]], vts[textures[i + 1]]),
-            YELLOW_RUBBER //TEMPORARY
-        ));
+        if (hasN) {
+            objects.push_back(new nTriangle(
+                Vertex(vs[vertices[0]], vns[normals[0]], vts[textures[0]]),
+                Vertex(vs[vertices[i]], vns[normals[i]], vts[textures[i]]),
+                Vertex(vs[vertices[i + 1]], vns[normals[i + 1]], vts[textures[i + 1]]),
+                // vs[vertices[i]], vs[vertices[0]], vs[vertices[i + 1]],
+                YELLOW_RUBBER //TEMPORARY
+            ));
+        }
+        else {
+            Vec3f norm = (vs[vertices[i]] - vs[vertices[0]]) ^ (vs[vertices[i + 1]] - vs[vertices[0]]);
+            objects.push_back(new nTriangle(
+                Vertex(vs[vertices[0]], norm, vts[textures[0]]),
+                Vertex(vs[vertices[i]], norm, vts[textures[i]]),
+                Vertex(vs[vertices[i + 1]], norm, vts[textures[i + 1]]),
+                YELLOW_RUBBER //TEMPORARY
+            ));
+        }
     }
 }
 
 // NUMBER
 
 bool isDigit(char ch) {
-    return '0' <= ch && ch >= '9';
+    return '0' <= ch && ch <= '9';
 }
 
 int ObjModel::scanWhole(strIter &it, const strIter &end) {
     checkAssertion(isDigit(*it), "Expected digit");
     int res = 0;
-    while (it != end && isDigit(*it))
-        res * 10 + (*it - '0');
+    while (it != end && isDigit(*it)) {
+        res = res * 10 + (*it - '0');
+        it++;
+    }
     return res;
 }
 
 float ObjModel::scanFractPart(strIter &it, const strIter &end) {
     checkAssertion(isDigit(*it), "Expected digit");
     float res = 0.f;
-    while (it != end && isDigit(*it))
-        res * 0.1f + (*it - '0');
+    while (it != end && isDigit(*it)) {
+        res = res * 0.1f + (*it - '0');
+        it++;
+    }
     return res * 0.1f;
 }
 

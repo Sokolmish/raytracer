@@ -34,7 +34,7 @@ private:
     AABBbox bbox;
 public:
     nTriangle(const Vertex &p1, const Vertex &p2, const Vertex &p3, const Material &mat);
-    Intersection getIntersection(const Vec3f &origin, const Vec3f &dir, bool needData) const { } //TODO!!!
+    Intersection getIntersection(const Vec3f &origin, const Vec3f &dir, bool needData) const;
     AABBbox boundingBox() const;
 };
 
