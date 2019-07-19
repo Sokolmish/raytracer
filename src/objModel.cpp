@@ -54,7 +54,7 @@ void ObjModel::scanLine(strIter &it, const strIter &end) {
 }
 
 void ObjModel::scanVertex(strIter &it, const strIter &end) {
-    it++; //Check bounds
+    it++;
     if (*it == ' ' || *it == '\t') { //Vertex (x, y, z, [w])
         it++;
         float x, y, z, w = 1.0f;
@@ -65,7 +65,7 @@ void ObjModel::scanVertex(strIter &it, const strIter &end) {
         scanSpaces(it, end);
         z = scanNumber(it, end);
         scanSpaces(it, end);
-        if (*it != '\n') {
+        if (*it != '\n' && *it != '#') {
             w = scanNumber(it, end);
             scanSpaces(it, end);
         }
@@ -79,7 +79,7 @@ void ObjModel::scanVertex(strIter &it, const strIter &end) {
         scanSpaces(it, end);
         v = scanNumber(it, end); //There the second coordinate is required (unlike the official structure)
         scanSpaces(it, end);
-        if (*it != '\n') {
+        if (*it != '\n' && *it != '#') {
             w = scanNumber(it, end);
             scanSpaces(it, end);
         }
@@ -151,7 +151,7 @@ void ObjModel::scanFace(strIter &it, const strIter &end) {
     }
     scanSpaces(it, end);
 
-    while (it != end && *it != '\n') {
+    while (it != end && *it != '\n' && *it != '#') {
         vertices.push_back(scanInt(it, end));
         scanSpaces(it, end);
         if (hasT) {
