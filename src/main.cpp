@@ -23,8 +23,8 @@ void fillScene(Scene &scene) {
     scene.addObject(createQuadrangle(Vec3f(-8, -3, -9), Vec3f(-8, -3, -20), Vec3f(-8, 9, -20), Vec3f(-8, 9, -9), MIRROR));
     scene.addObject(createQuadrangle(Vec3f(-8, -3, -20), Vec3f(15, -3, -20), Vec3f(15, 9, -20), Vec3f(-8, 9, -20), MIRROR));
 
-    // scene.addObject(createSerpinsky(3, Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
-    scene.addObject(createPyramid(Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
+    scene.addObject(createSerpinsky(3, Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
+    // scene.addObject(createPyramid(Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
     
     scene.addObject(ObjModel(Vec3f(-4, -2, -11), "./input/cube.obj").getObjects());
 
@@ -36,7 +36,7 @@ void fillScene(Scene &scene) {
     // scene.addObject(createSerpinsky(3, Vec3f(5, 10, -13), 10, 8, toRad(65), CYAN_RUBBER));
 }
 
-int main() { //2.9 seconds
+int main() { //3.19 seconds
     Camera camera(
         RES_720p,           //Resolution
         Vec3f(3, 4, 4),     //Position
