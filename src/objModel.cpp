@@ -266,7 +266,7 @@ float ObjModel::scanNumber(strIter &it, const strIter &end) {
 // COMMENT AND SPACES
 
 void ObjModel::scanComment(strIter &it, const strIter &end) {
-    while (it != end && *it == '\n')
+    while (it != end && *it != '\n')
         it++;
     it++; //Newline
 }
