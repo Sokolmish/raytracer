@@ -118,6 +118,7 @@ void ObjModel::scanFace(strIter &it, const strIter &end) {
         it++;
         scanSpaces(it, end);
         if (*it == '/') {
+            it++;
             hasT = false;
             hasN = true;
             textures.push_back(0);
@@ -129,6 +130,7 @@ void ObjModel::scanFace(strIter &it, const strIter &end) {
             textures.push_back(scanInt(it, end));
             scanSpaces(it, end);
             if (*it == '/') {
+                it++;
                 hasN = true;
                 normals.push_back(scanInt(it, end));
                 //End with (V T N)
@@ -180,7 +182,6 @@ void ObjModel::scanFace(strIter &it, const strIter &end) {
                 Vertex(vs[vertices[0]], vns[normals[0]], vts[textures[0]]),
                 Vertex(vs[vertices[i]], vns[normals[i]], vts[textures[i]]),
                 Vertex(vs[vertices[i + 1]], vns[normals[i + 1]], vts[textures[i + 1]]),
-                // vs[vertices[i]], vs[vertices[0]], vs[vertices[i + 1]],
                 YELLOW_RUBBER //TEMPORARY
             ));
         }
