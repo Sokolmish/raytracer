@@ -1,8 +1,6 @@
 #include <iostream>
 #include <ctime>
 
-// #include <GL/freeglut.h>
-
 #include "render.hpp"
 #include "image.hpp"
 #include "objModel.hpp"

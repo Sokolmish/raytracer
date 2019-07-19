@@ -176,7 +176,7 @@ void ObjModel::scanFace(strIter &it, const strIter &end) {
     
     for (int i = 1; i < vertices.size() - 1; i++) {
         if (hasN) {
-            objects.push_back(new nTriangle(
+            objects.push_back(new Triangle(
                 Vertex(vs[vertices[0]], vns[normals[0]], vts[textures[0]]),
                 Vertex(vs[vertices[i]], vns[normals[i]], vts[textures[i]]),
                 Vertex(vs[vertices[i + 1]], vns[normals[i + 1]], vts[textures[i + 1]]),
@@ -186,7 +186,7 @@ void ObjModel::scanFace(strIter &it, const strIter &end) {
         }
         else {
             Vec3f norm = (vs[vertices[i]] - vs[vertices[0]]) ^ (vs[vertices[i + 1]] - vs[vertices[0]]);
-            objects.push_back(new nTriangle(
+            objects.push_back(new Triangle(
                 Vertex(vs[vertices[0]], norm, vts[textures[0]]),
                 Vertex(vs[vertices[i]], norm, vts[textures[i]]),
                 Vertex(vs[vertices[i + 1]], norm, vts[textures[i + 1]]),

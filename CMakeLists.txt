@@ -19,10 +19,14 @@ set(SOURCES
         "src/image.cpp"
         "src/scene.cpp"
         "src/kdtree.cpp"
-        "src/objects.cpp"
-        "src/objectsSupport.cpp"
         "src/objModel.cpp"
+        "src/camera.cpp"
 
+        "src/objectsSupport.cpp"
+        "src/objects.cpp"
+        "src/objects/sphere.cpp"
+        "src/objects/flatTriangle.cpp"
+        "src/objects/triangle.cpp"
 )
 
 add_executable(main ${SOURCES})
