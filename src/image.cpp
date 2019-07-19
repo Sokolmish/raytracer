@@ -1,7 +1,7 @@
 #include "image.hpp"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+#include "util/stb_image_write.h"
 
 #include <cstring>
 

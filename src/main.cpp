@@ -7,7 +7,7 @@
 #include "image.hpp"
 #include "objModel.hpp"
 
-#define FILENAME "./output/output.bmp"
+#define FILENAME "output.bmp"
 
 #define MAX_RAY_DEPTH 6
 

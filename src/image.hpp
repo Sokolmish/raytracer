@@ -1,7 +1,7 @@
 #ifndef __IMAGE_H__
 #define __IMAGE_H__
 
-#include "util.hpp"
+#include "util/util.hpp"
 
 class Image {
 private:

@@ -1,7 +1,7 @@
 #ifndef __OBJECTSSUPPORT_H__
 #define __OBJECTSSUPPORT_H__
 
-#include "util.hpp"
+#include "util/util.hpp"
 
 struct Vertex {
     Vec3f loc, norm;

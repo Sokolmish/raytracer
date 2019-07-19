@@ -11,15 +11,18 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 
 set(SOURCES 
-        main.cpp
-        render.cpp
-        image.cpp
-        scene.cpp
-        kdtree.cpp
-        objects.cpp
-        objectsSupport.cpp
-        util.cpp
-        objModel.cpp
+        "src/main.cpp"
+
+        "src/util/util.cpp"
+
+        "src/render.cpp"
+        "src/image.cpp"
+        "src/scene.cpp"
+        "src/kdtree.cpp"
+        "src/objects.cpp"
+        "src/objectsSupport.cpp"
+        "src/objModel.cpp"
+
 )
 
 add_executable(main ${SOURCES})
