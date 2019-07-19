@@ -16,11 +16,13 @@ set(SOURCES
         "src/util/util.cpp"
 
         "src/render.cpp"
-        "src/image.cpp"
-        "src/scene.cpp"
         "src/kdtree.cpp"
+        "src/image.cpp"
         "src/objModel.cpp"
-        "src/camera.cpp"
+
+        "src/scene.cpp"
+        "src/scene/camera.cpp"
+        "src/scene/environment.cpp"
 
         "src/objectsSupport.cpp"
         "src/objects.cpp"

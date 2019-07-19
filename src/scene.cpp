@@ -1,7 +1,5 @@
 #include "scene.hpp"
 
-// SCENE
-
 void Scene::addObject(VolumeObj *obj) {
     if (objects.size() == 0)
         globalBox = obj->boundingBox();
@@ -35,8 +33,4 @@ void Scene::free() {
     for (auto&& t : objects)
         delete t;
     root.free();
-}
-
-Color Environment::getColor(const Vec3f &origin, const Vec3f &dir) {
-    return background;
 }

@@ -1,7 +1,7 @@
 #ifndef __LIGHT_H__
 #define __LIGHT_H__
 
-#include "util/util.hpp"
+#include "../util/util.hpp"
 
 struct Light {
     Vec3f loc;

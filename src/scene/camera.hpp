@@ -1,7 +1,7 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
-#include "util/util.hpp"
+#include "../util/util.hpp"
 
 struct Camera {
     Vec3f pos, dir, up, right;
