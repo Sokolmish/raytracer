@@ -65,8 +65,12 @@ void Render::render(Image &image, const Camera &camera, const Scene &scene) {
             image.setPixel(i, j, traceRay(camera.pos, curDir, scene, 0));
         }
     }
+    antiAlliasing(image, camera, scene);
+}
 
-    //Antialliasing
+void Render::antiAlliasing(Image &image, const Camera &camera, const Scene &scene) {
+    float xSh = -camera.width / 2;
+    float ySh = -camera.height / 2;
     uint8_t *grayImg = new uint8_t[camera.width * camera.height];
     #pragma omp parallel for collapse(2)
     for (int j = 0; j < camera.height; j++) {

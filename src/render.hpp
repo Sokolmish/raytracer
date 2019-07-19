@@ -16,6 +16,7 @@ private:
 public:
     Render(const Environment &env, int m) : env(env), max_ray_depth(m) {};
     void render(Image &image, const Camera &camera, const Scene &scene);
+    void antiAlliasing(Image &image, const Camera &camera, const Scene &scene);
 };
 
 #endif

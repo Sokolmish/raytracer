@@ -13,9 +13,36 @@ void Scene::addObject(const std::vector<VolumeObj*> &objs) {
         addObject(t);
 }
 
+
+void Scene::addSphere(const Vec3f &center, float r, const Material &mat) {
+    addObject(new Sphere(center, r, mat));
+}
+
+void Scene::addQuadrangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Vec3f &p4, const Material &mat) {
+    addObject(createQuadrangle(p1, p2, p3, p4, mat));
+}
+
+void Scene::addPyramid(const Vec3f &top, float height, float edge, float angle, const Material &mat) {
+    addObject(createPyramid(top, height, edge, angle, mat));
+}
+
+void Scene::addSerpinskiy(int depth, const Vec3f &top, float height, float edge, float angle, const Material &mat) {
+    addObject(createSerpinsky(depth, top, height, edge, angle, mat));
+}
+
+void Scene::addObjModel(const Vec3f &center, const std::string &path) {
+    addObject(ObjModel(center, path).getObjects());
+}
+
+
 void Scene::addLight(const Light &obj) {
     lights.push_back(obj);
 }
+
+void Scene::addLight(const Vec3f &loc, float power) {
+    addLight(Light(loc, power));
+}
+
 
 const KDnode& Scene::getKDTree() const {
     return root;

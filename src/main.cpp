@@ -3,7 +3,6 @@
 
 #include "render.hpp"
 #include "image.hpp"
-#include "objModel.hpp"
 
 #define FILENAME "output.bmp"
 
@@ -15,22 +14,22 @@
 
 void fillScene(Scene &scene) {
     // SCENE 1
-    scene.addObject(new Sphere(Vec3f(0, 0, -14), 3, RED_RUBBER));
-    scene.addObject(new Sphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER));
-    scene.addObject(new Sphere(Vec3f(-4, 5, -15), 3, MIRROR));
+    scene.addSphere(Vec3f(0, 0, -14), 3, RED_RUBBER);
+    scene.addSphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER);
+    scene.addSphere(Vec3f(-4, 5, -15), 3, MIRROR);
 
-    scene.addObject(createQuadrangle(Vec3f(-8, -3, -9), Vec3f(15, -3, -9), Vec3f(15, -3, -20), Vec3f(-8, -3, -20), GREEN_RUBBER));
-    scene.addObject(createQuadrangle(Vec3f(-8, -3, -9), Vec3f(-8, -3, -20), Vec3f(-8, 9, -20), Vec3f(-8, 9, -9), MIRROR));
-    scene.addObject(createQuadrangle(Vec3f(-8, -3, -20), Vec3f(15, -3, -20), Vec3f(15, 9, -20), Vec3f(-8, 9, -20), MIRROR));
+    scene.addQuadrangle(Vec3f(-8, -3, -9), Vec3f(15, -3, -9), Vec3f(15, -3, -20), Vec3f(-8, -3, -20), GREEN_RUBBER);
+    scene.addQuadrangle(Vec3f(-8, -3, -9), Vec3f(-8, -3, -20), Vec3f(-8, 9, -20), Vec3f(-8, 9, -9), MIRROR);
+    scene.addQuadrangle(Vec3f(-8, -3, -20), Vec3f(15, -3, -20), Vec3f(15, 9, -20), Vec3f(-8, 9, -20), MIRROR);
 
-    scene.addObject(createSerpinsky(3, Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
-    // scene.addObject(createPyramid(Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER));
+    scene.addSerpinskiy(3, Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER);
+    // scene.addPyramid(Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER);
     
-    scene.addObject(ObjModel(Vec3f(-4, -2, -11), "./input/cube.obj").getObjects());
+    scene.addObjModel(Vec3f(-4, -2, -11), "./input/cube.obj");
 
-    scene.addLight(Light(Vec3f(10, 25, -1), 3));
-    scene.addLight(Light(Vec3f(-6, 5, -6), 2));
-    scene.addLight(Light(Vec3f(5, 5, -15), 0.5));
+    scene.addLight(Vec3f(10, 25, -1), 3);
+    scene.addLight(Vec3f(-6, 5, -6), 2);
+    scene.addLight(Vec3f(5, 5, -15), 0.5);
 
     //SCENE 2 (NOT FULL)
     // scene.addObject(createSerpinsky(3, Vec3f(5, 10, -13), 10, 8, toRad(65), CYAN_RUBBER));
