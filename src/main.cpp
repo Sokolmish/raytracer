@@ -13,37 +13,27 @@
 #define KD_PARTS 10
 
 void fillScene(Scene &scene) {
-    // SCENE 1
-    scene.addSphere(Vec3f(0, 0, -14), 3, RED_RUBBER);
-    scene.addSphere(Vec3f(2.5, 2.5, -12.5), 2.25, BLUE_RUBBER);
-    scene.addSphere(Vec3f(-4, 5, -15), 3, MIRROR);
+    scene.addObjModel(Vec3f(0, 0, 0), MAT_SCALE(45, 45, 45), "input/env.obj");
+    scene.addObjModel(Vec3f(7, 0, -13), MAT_SCALE(2e-2, 2e-2, 2e-2) * MAT_ROT_Y(toRad(-135)), "input/cat.obj");
 
-    scene.addQuadrangle(Vec3f(-8, -3, -9), Vec3f(15, -3, -9), Vec3f(15, -3, -20), Vec3f(-8, -3, -20), GREEN_RUBBER);
-    scene.addQuadrangle(Vec3f(-8, -3, -9), Vec3f(-8, -3, -20), Vec3f(-8, 9, -20), Vec3f(-8, 9, -9), MIRROR);
-    scene.addQuadrangle(Vec3f(-8, -3, -20), Vec3f(15, -3, -20), Vec3f(15, 9, -20), Vec3f(-8, 9, -20), MIRROR);
+    // scene.addSphere(Vec3f(-5, 3.5, -20), 3.5, RED_RUBBER);
+    // scene.addSphere(Vec3f(-3, 7, -18), 2.5, BLUE_RUBBER);
 
-    scene.addSerpinskiy(3, Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER);
-    // scene.addPyramid(Vec3f(9, 4.05, -13), 7, 6, toRad(90), CYAN_RUBBER);
-    
-    scene.addObjModel(Vec3f(-4, -2, -11), "./input/cube.obj");
+    // scene.addObjModel(Vec3f(-5, 0, -15), MAT_SCALE(10, 10, 10), "input/test1.obj");
 
-    scene.addLight(Vec3f(10, 25, -1), 3);
-    scene.addLight(Vec3f(-6, 5, -6), 2);
-    scene.addLight(Vec3f(5, 5, -15), 0.5);
-
-    //SCENE 2 (NOT FULL)
-    // scene.addObject(createSerpinsky(3, Vec3f(5, 10, -13), 10, 8, toRad(65), CYAN_RUBBER));
+    scene.addLight(Vec3f(0, 50, 0), 1.5);
+    scene.addLight(Vec3f(0, 7, 5), 2);
 }
 
 int main() { //3.19 seconds
     Camera camera(
         RES_720p,           //Resolution
-        Vec3f(3, 4, 4),     //Position
+        Vec3f(0, 7, 5),     //Position
         Vec3f(0, 0, -1),    //Direction of view
         Vec3f(0, 1, 0),     //Vertical direction
         toRad(90)           //FOV
     );
-    Environment env(
+    Environment env(    
         LIGHT_BLUE          //Background
     );
     Scene scene;

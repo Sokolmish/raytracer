@@ -34,8 +34,9 @@ Intersection Triangle::getIntersection(const Vec3f &origin, const Vec3f &dir, bo
         return Intersection(false, 0.f);
     if (needData) {
         Vec3f norm = ((1 - u - v) * p1.norm + u * p2.norm + v * p3.norm).normalize();
-        //TODO: texture interpolation
+        Vec2f tex = ((1 - u - v) * p1.texture + u * p2.texture + v * p3.texture);
         return Intersection(true, t0, origin + t0 * dir, norm, mat);
+            // Material(mat.refractive_index, mat.albedo, Color(tex.x * 255, tex.y * 255, 0), mat.specular_exponent));
     }
     else
         return Intersection(true, t0);

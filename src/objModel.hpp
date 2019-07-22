@@ -8,6 +8,7 @@ typedef std::string::const_iterator strIter;
 class ObjModel {
 private:
     Vec3f center;
+    Mat3f transform;
 
     std::vector<Vec3f> vs, vns;
     std::vector<Vec2f> vts;
@@ -27,7 +28,7 @@ private:
 
     bool checkAssertion(bool expr, std::string msg);
 public:
-    ObjModel(const Vec3f &center, const std::string &path);
+    ObjModel(const Vec3f &center, const Mat3f &trans, const std::string &path);
 
     const std::vector<VolumeObj*>& getObjects() const;
 };

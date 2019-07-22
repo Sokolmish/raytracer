@@ -18,6 +18,10 @@ void Scene::addSphere(const Vec3f &center, float r, const Material &mat) {
     addObject(new Sphere(center, r, mat));
 }
 
+void Scene::addTriangle(const Vertex &p1, const Vertex &p2, const Vertex &p3, const Material &mat) {
+    addObject(new Triangle(p1, p2, p3, mat));
+}
+
 void Scene::addQuadrangle(const Vec3f &p1, const Vec3f &p2, const Vec3f &p3, const Vec3f &p4, const Material &mat) {
     addObject(createQuadrangle(p1, p2, p3, p4, mat));
 }
@@ -30,8 +34,8 @@ void Scene::addSerpinskiy(int depth, const Vec3f &top, float height, float edge,
     addObject(createSerpinsky(depth, top, height, edge, angle, mat));
 }
 
-void Scene::addObjModel(const Vec3f &center, const std::string &path) {
-    addObject(ObjModel(center, path).getObjects());
+void Scene::addObjModel(const Vec3f &center, const Mat3f &trans, const std::string &path) {
+    addObject(ObjModel(center, trans, path).getObjects());
 }
 
 

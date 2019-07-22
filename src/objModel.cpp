@@ -3,7 +3,8 @@
 #include <fstream>
 #include <sstream>
 
-ObjModel::ObjModel(const Vec3f &center, const std::string &path) : center(center) {
+ObjModel::ObjModel(const Vec3f &center, const Mat3f &trans, const std::string &path) : 
+        center(center), transform(trans) {
     std::ifstream is(path);
     std::ostringstream oss;
     oss << is.rdbuf(); //TODO: better way to file reading?
@@ -69,7 +70,7 @@ void ObjModel::scanVertex(strIter &it, const strIter &end) {
             w = scanNumber(it, end);
             scanSpaces(it, end);
         }
-        this->vs.push_back(Vec3f(x, y, z) + center);
+        this->vs.push_back(transform * Vec3f(x, y, z) + center);
     }
     else if (*it == 't') { //Texture vertex (x, y, [w])
         it++;
