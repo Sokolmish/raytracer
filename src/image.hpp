@@ -6,7 +6,7 @@
 class Image {
 private:
     int width, height;
-    uint8_t *data;
+    Color *data;
 public:
     Image(int width, int height);
     void free();

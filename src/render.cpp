@@ -50,7 +50,7 @@ Color Render::traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene
     }
     
     return  mat.diffuse_color * diffIntense * mat.albedo[0] +
-            WHITE * specIntense * mat.albedo[1] +
+            Vec3f(1.f, 1.f, 1.f) * specIntense * mat.albedo[1] +
             reflColor * mat.albedo[2] +
             refrColor * mat.albedo[3];
 }
@@ -75,7 +75,7 @@ void Render::antiAlliasing(Image &image, const Camera &camera, const Scene &scen
     #pragma omp parallel for collapse(2)
     for (int j = 0; j < camera.height; j++) {
         for (int i = 0; i < camera.width; i++) {
-            Color col = image.getPixel(i, j); //r = x, g = y, b = z
+            Color col = image.getPixel(i, j) * 255.f; //r = x, g = y, b = z
             grayImg[j * camera.width + i] = (uint8_t)(0.2126f * col.x + 0.7152f * col.y + 0.0722f * col.z);
         }
     }
