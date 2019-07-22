@@ -38,18 +38,19 @@ Color Render::traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene
         
         Intersection lInter = getIntersection(lightTouch, lDir, scene, false);
         if (!lInter.state || lInter.len >= (light.loc - lightTouch).length()) {
-            float tPower = lDir * normal;
+            float tPower = fabs(lDir * normal);
             if (tPower > 0)
                 diffIntense += tPower * light.power;
 
             Vec3f rDir = -getReflection(-lDir, normal);
-            tPower = rDir * dir;
+            tPower = fabs(rDir * dir);
             if (tPower > 0)
                 specIntense += powf(tPower, mat.specular_exponent) * light.power;
         }
     }
     
-    return mat.diffuse_color * diffIntense + 
+    return  mat.ambient_color +
+            mat.diffuse_color * diffIntense + 
             mat.specular_color * specIntense +
             reflColor * mat.albedo[0] +
             refrColor * mat.albedo[1];
