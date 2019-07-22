@@ -19,18 +19,18 @@ Color Render::traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene
     Material mat = inter.mat;
 
     Color reflColor = BLACK, refrColor = BLACK; //Black don't affect to color in addition
-    if (mat.albedo[2] >= 1e-3) {
+    if (mat.albedo[0] >= 1e-3) {
         Vec3f reflDir = getReflection(dir, normal);
         Vec3f reflTouch = getNearPoint(touch, reflDir, normal);
         reflColor = traceRay(reflTouch, reflDir, scene, depth + 1);
     }
-    if (mat.albedo[3] >= 1e-3) {
+    if (mat.albedo[1] >= 1e-3) {
         Vec3f refrDir = getRefraction(dir, normal, mat.refractive_index);
         Vec3f refrTouch = getNearPoint(touch, refrDir, normal);
         refrColor = traceRay(refrTouch, refrDir, scene, depth + 1);
     }
     
-    float diffIntense = 0.f;
+    float diffIntense = 0.f; //aka lambertian
     float specIntense = 0.f;
     for (auto&& light : scene.getLights()) {
         Vec3f lDir = (light.loc - touch).normalize(); //Light direction
@@ -42,17 +42,17 @@ Color Render::traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene
             if (tPower > 0)
                 diffIntense += tPower * light.power;
 
-            Vec3f rDir = getReflection(-lDir, normal);
-            tPower = -(rDir * dir);
+            Vec3f rDir = -getReflection(-lDir, normal);
+            tPower = rDir * dir;
             if (tPower > 0)
                 specIntense += powf(tPower, mat.specular_exponent) * light.power;
         }
     }
     
-    return  mat.diffuse_color * diffIntense * mat.albedo[0] +
-            Vec3f(1.f, 1.f, 1.f) * specIntense * mat.albedo[1] +
-            reflColor * mat.albedo[2] +
-            refrColor * mat.albedo[3];
+    return mat.diffuse_color * diffIntense + 
+            mat.specular_color * specIntense +
+            reflColor * mat.albedo[0] +
+            refrColor * mat.albedo[1];
 }
 
 void Render::render(Image &image, const Camera &camera, const Scene &scene) {
