@@ -55,8 +55,10 @@ struct Material {
 #define CYAN_RUBBER     Material(1.0, Vec4f(0.9,  0.1, 0.0, 0.0), Vec3f(26,  77,  77),   10.f)
 #define YELLOW_RUBBER   Material(1.0, Vec4f(0.9,  0.1, 0.0, 0.0), Vec3f(77,  77,  26),   10.f)
 
-#define MAT_ROT_X(phi) Matrix<float, 3, 3> { 1, 0, 0, 0, cosf(phi), -sinf(phi), 0, sinf(phi), cosf(phi) }
-#define MAT_ROT_Y(phi) Matrix<float, 3, 3> { cosf(phi), 0, sinf(phi), 0, 1, 0, -sinf(phi), 0, cosf(phi) }
-#define MAT_ROT_Z(phi) Matrix<float, 3, 3> { cosf(phi), -sinf(phi), 0, sinf(phi), cosf(phi), 0, 0, 0, 1 }
+#define MAT_IDENTITY Mat3f { 1, 0, 0, 0, 1, 0, 0, 0, 1 }
+#define MAT_ROT_X(phi) Mat3f { 1, 0, 0, 0, cosf(phi), -sinf(phi), 0, sinf(phi), cosf(phi) }
+#define MAT_ROT_Y(phi) Mat3f { cosf(phi), 0, sinf(phi), 0, 1, 0, -sinf(phi), 0, cosf(phi) }
+#define MAT_ROT_Z(phi) Mat3f { cosf(phi), -sinf(phi), 0, sinf(phi), cosf(phi), 0, 0, 0, 1 }
+#define MAT_SCALE(x, y, z) Mat3f { x, 0, 0, 0, y, 0, 0, 0, z }
 
 #endif

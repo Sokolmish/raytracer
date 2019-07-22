@@ -2,6 +2,7 @@
 #define __MATRIX_H__
 
 #include "vec.hpp"
+#include <iostream>
 
 template <typename T, int dimX, int dimY>
 struct Matrix {
@@ -15,7 +16,7 @@ struct Matrix {
         assert(l.size() == dimX * dimY);
         int index = 0;
         for (auto&& e : l) {
-            (*this)[index / dimX][index % dimX] = e;
+            (*this)[index % dimX][index / dimX] = e;
             index++;
         }
     }
@@ -101,7 +102,7 @@ Vec<T, dim> operator* (const Matrix<T, dim, dim> &lhs, const Vec<T, dim> &rhs) {
     Vec<T, dim> t;
     for (int i = 0; i < dim; i++)
         for (int j = 0; j < dim; j++)
-            t[i] += lhs[i][j] * rhs[j];
+            t[i] += lhs[j][i] * rhs[j];
     return t;
 }
 
@@ -113,6 +114,18 @@ Matrix<T, dimA, dimB> operator* (const Matrix<T, dimA, dimO> &lhs, const Matrix<
     for (int i = 0; i < dimO; i++)
         res[i] = lhs * rhs[i];
     return res;
+}
+
+//Output
+
+template <typename T, int dimX, int dimY>
+std::ostream& operator<< (std::ostream &os, const Matrix<T, dimX, dimY> &mat) {
+    for (int j = 0; j < dimY; j++) {
+        for (int i = 0; i < dimX; i++)
+            os << mat[i][j] << "\t";
+        os << std::endl;
+    }
+    return os;
 }
 
 //Definitions
