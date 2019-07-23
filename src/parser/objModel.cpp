@@ -18,6 +18,8 @@ ObjModel::ObjModel(const Vec3f &center, const Mat3f &trans, const std::string &p
     }
     root = rootss.str();
 
+    curMat = YELLOW_RUBBER; //Default material
+
     std::ifstream is(path);
     std::ostringstream oss;
     oss << is.rdbuf(); //TODO: better way to file reading?
