@@ -32,26 +32,26 @@ Color Render::traceRay(const Vec3f &origin, const Vec3f &dir, const Scene &scene
     
     float diffIntense = 0.f; //aka lambertian
     float specIntense = 0.f;
+    Color dCol = BLACK, sCol = BLACK;
     for (auto&& light : scene.getLights()) {
         Vec3f lDir = (light.loc - touch).normalize(); //Light direction
         Vec3f lightTouch = getNearPoint(touch, lDir, normal);
         
         Intersection lInter = getIntersection(lightTouch, lDir, scene, false);
-        if (!lInter.state || lInter.len >= (light.loc - lightTouch).length()) {
+        float distance = (light.loc - lightTouch).length();
+        if (!lInter.state || lInter.len >= distance) {
             float tPower = fabs(lDir * normal);
-            if (tPower > 0)
-                diffIntense += tPower * light.power;
+            dCol += light.color * tPower * light.power / distance;
 
             Vec3f rDir = -getReflection(-lDir, normal);
             tPower = fabs(rDir * dir);
-            if (tPower > 0)
-                specIntense += powf(tPower, mat.specular_exponent) * light.power;
+            sCol += light.color * powf(tPower, mat.specular_exponent) * light.power / distance;
         }
     }
-    
+
     return  mat.ambient_color +
-            mat.diffuse_color * diffIntense + 
-            mat.specular_color * specIntense +
+            multiply(mat.diffuse_color, dCol) +
+            multiply(mat.specular_color, sCol) +
             reflColor * mat.albedo[0] +
             refrColor * mat.albedo[1];
 }

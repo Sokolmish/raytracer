@@ -27,9 +27,9 @@ void fillScene1(Scene &scene) {
     
     scene.addObjModel(Vec3f(-4, -2, -11), MAT_IDENTITY, "input/cube.obj");
 
-    scene.addLight(Vec3f(10, 25, -1), 3);
-    scene.addLight(Vec3f(-6, 5, -6), 2);
-    scene.addLight(Vec3f(5, 5, -15), 0.5);
+    scene.addLight(Vec3f(10, 25, -1), 40, WHITE);
+    scene.addLight(Vec3f(-6, 5, -6), 30, WHITE);
+    scene.addLight(Vec3f(5, 5, -15), 15, MAGENTA * 0.5f);
 }
 
 void fillScene2(Scene &scene) {
@@ -37,11 +37,11 @@ void fillScene2(Scene &scene) {
     scene.addObjModel(Vec3f(0, 0, 0), MAT_SCALE(45, 45, 45), "input/env.obj");
     scene.addObjModel(Vec3f(6, 0, -7), MAT_SCALE(15e-3, 15e-3, 15e-3) * MAT_ROT_Y(toRad(-135)), "input/cat.obj");
 
-    scene.addLight(Vec3f(0, 50, 0), 1.5);
-    scene.addLight(Vec3f(1, 4, 5), 2);
+    scene.addLight(Vec3f(0, 50, 0), 20, WHITE);
+    scene.addLight(Vec3f(1, 4, 5), 25, WHITE);
 }
 
-int main() { //3.19 seconds
+int main() {
     Camera camera(
         RES_720p,           //Resolution
         Vec3f(1, 2, 5),     //Position
@@ -53,7 +53,7 @@ int main() { //3.19 seconds
         LIGHT_BLUE          //Background
     );
     Scene scene;
-    fillScene2(scene);
+    fillScene1(scene);
 
     uint64_t time = clock();
     scene.buildKDtree(MAX_KD_DEPTH, MAX_KD_LEAF, KD_PARTS);

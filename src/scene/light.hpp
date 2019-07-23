@@ -6,7 +6,8 @@
 struct Light {
     Vec3f loc;
     float power;
-    Light(Vec3f loc, float power) : loc(loc), power(power) {}
+    Color color;
+    Light(const Vec3f &loc, float power, const Color &c) : loc(loc), power(power), color(c) {}
 };
 
 #endif

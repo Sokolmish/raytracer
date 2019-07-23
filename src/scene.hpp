@@ -25,7 +25,7 @@ public:
     void addObjModel(const Vec3f &center, const Mat3f &trans, const std::string &path);
 
     void addLight(const Light &obj);
-    void addLight(const Vec3f &loc, float power);
+    void addLight(const Vec3f &loc, float power, const Color &col);
 
     const KDnode& getKDTree() const;
     const std::vector<Light>& getLights() const;

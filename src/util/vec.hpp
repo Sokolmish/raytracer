@@ -38,6 +38,15 @@ struct Vec {
     Vec<T, dim> normalize() const {
         return (*this) / length();
     }
+    //Compound assigment
+    Vec<T, dim> operator+= (const Vec<T, dim> &rhs) {
+        for (int i = 0; i < dim; i++)
+            this->data[i] += rhs.data[i];
+    }
+    Vec<T, dim> operator-= (const Vec<T, dim> &rhs) {
+        for (int i = 0; i < dim; i++)
+            this->data[i] -= rhs.data[i];
+    }
 };
 
 template <typename T>
@@ -78,6 +87,15 @@ struct Vec<T, 2> {
     }
     Vec<T, 2> normalize() const {
         return (*this) / length();
+    }
+    //Compound assigment
+    Vec<T, 2> operator+= (const Vec<T, 2> &rhs) {
+        x += rhs.x;
+        y += rhs.y;
+    }
+    Vec<T, 2> operator-= (const Vec<T, 2> &rhs) {
+        x -= rhs.x;
+        y -= rhs.y;
     }
 };
 
@@ -133,6 +151,17 @@ struct Vec<T, 3> {
             x * rhs.y - y * rhs.x
         );
     }
+    //Compound assigment
+    Vec<T, 3> operator+= (const Vec<T, 3> &rhs) {
+        x += rhs.x;
+        y += rhs.y;
+        z += rhs.z;
+    }
+    Vec<T, 3> operator-= (const Vec<T, 3> &rhs) {
+        x -= rhs.x;
+        y -= rhs.y;
+        z -= rhs.z;
+    }
 };
 
 template <typename T>
@@ -183,6 +212,19 @@ struct Vec<T, 4> {
     }
     Vec<T, 4> normalize() const {
         return (*this) / length();
+    }
+    //Compound assigment
+    Vec<T, 4> operator+= (const Vec<T, 4> &rhs) {
+        x += rhs.x;
+        y += rhs.y;
+        z += rhs.z;
+        w += rhs.w;
+    }
+    Vec<T, 4> operator-= (const Vec<T, 4> &rhs) {
+        x -= rhs.x;
+        y -= rhs.y;
+        z -= rhs.z;
+        w += rhs.w;
     }
 };
 
@@ -244,6 +286,15 @@ T operator* (const Vec<T, dim> &lhs, const Vec<T, dim> &rhs) {
     T t = 0;
     for (int i = 0; i < dim; i++)
         t += lhs[i] * rhs[i];
+    return t;
+}
+
+//Multiplication
+template <typename T, int dim>
+Vec<T, dim> multiply(const Vec<T, dim> &lhs, const Vec<T, dim> &rhs) {
+    Vec<T, dim> t(lhs);
+    for (int i = 0; i < dim; i++)
+        t[i] *= rhs[i];
     return t;
 }
 

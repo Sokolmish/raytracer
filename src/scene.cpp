@@ -43,8 +43,8 @@ void Scene::addLight(const Light &obj) {
     lights.push_back(obj);
 }
 
-void Scene::addLight(const Vec3f &loc, float power) {
-    addLight(Light(loc, power));
+void Scene::addLight(const Vec3f &loc, float power, const Color &col) {
+    addLight(Light(loc, power, col));
 }
 
 
