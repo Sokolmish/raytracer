@@ -91,7 +91,7 @@ bool isAlphabetic(char ch) {
 }
 
 bool isSpecSymb(char ch) {
-    return ch == '_' || ch == '.' || ch == '/' || ch == '\\' || ch == '-';
+    return ch == '_' || ch == '.' || ch == '/' || ch == '\\' || ch == '-' || ch == ':';
 }
 
 std::string scanIdent(strIter &it, const strIter &end) {

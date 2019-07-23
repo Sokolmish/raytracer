@@ -113,9 +113,9 @@ void mtlParser::scanScalar(strIter &it, const strIter &end) {
     scanSpaces(it, end);
 
     if (prop == 1)
-        curMaterial.albedo[1] = val;
-    else if (prop == 2)
         curMaterial.albedo[1] = 1 - val;
+    else if (prop == 2)
+        curMaterial.albedo[1] = val;
     else if (prop == 3)
         curMaterial.specular_exponent = val;
     else if (prop == 4)
