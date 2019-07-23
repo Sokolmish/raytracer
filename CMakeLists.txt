@@ -1,14 +1,15 @@
 cmake_minimum_required(VERSION 3.1)
 project(raytracer)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp") # OpenMP
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lGL -lGLU -lglut -lGLEW") # GLUT
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
-find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp") # OpenMP
+
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lGL -lGLU -lglut -lGLEW") # GLUT
+# find_package(OpenGL REQUIRED)
+# find_package(GLUT REQUIRED)
 
 set(SOURCES 
         "src/main.cpp"
@@ -18,7 +19,10 @@ set(SOURCES
         "src/render.cpp"
         "src/kdtree.cpp"
         "src/image.cpp"
-        "src/objModel.cpp"
+        
+        "src/parser/objModel.cpp"
+        "src/parser/mtlParser.cpp"
+        "src/parser/parserUtil.cpp"
 
         "src/scene.cpp"
         "src/scene/camera.cpp"

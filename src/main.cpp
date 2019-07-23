@@ -53,7 +53,7 @@ int main() { //3.19 seconds
         LIGHT_BLUE          //Background
     );
     Scene scene;
-    fillScene(scene);
+    fillScene2(scene);
 
     uint64_t time = clock();
     scene.buildKDtree(MAX_KD_DEPTH, MAX_KD_LEAF, KD_PARTS);

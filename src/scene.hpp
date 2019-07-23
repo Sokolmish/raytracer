@@ -2,7 +2,7 @@
 #define __SCENE_H__
 
 #include "kdtree.hpp"
-#include "objModel.hpp"
+#include "parser/objModel.hpp"
 #include "scene/light.hpp"
 #include "scene/camera.hpp"
 #include "scene/environment.hpp"
