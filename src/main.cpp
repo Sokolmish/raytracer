@@ -34,6 +34,14 @@ void fillScene1(Scene &scene) {
 
 void fillScene2(Scene &scene) {
     // __________SCENE 2_____________
+    scene.addSerpinskiy(3, Vec3f(2, 10, -16), 14, 11, toRad(-55), CYAN_RUBBER);
+    scene.addLight(Vec3f(8, 11, -10), 20, WHITE);;
+    scene.addLight(Vec3f(-5, 5, -13), 18, WHITE);
+    scene.addLight(Vec3f(2, 3, -16), 3, WHITE);
+}
+
+void fillScene3(Scene &scene) {
+    // __________SCENE 3_____________
     scene.addObjModel(Vec3f(0, 0, 0), MAT_SCALE(45, 45, 45), "input/env.obj");
     scene.addObjModel(Vec3f(6, 0, -7), MAT_SCALE(15e-3, 15e-3, 15e-3) * MAT_ROT_Y(toRad(-135)), "input/cat.obj");
 
@@ -53,7 +61,7 @@ int main() {
         LIGHT_BLUE          //Background
     );
     Scene scene;
-    fillScene1(scene);
+    fillScene3(scene);
 
     uint64_t time = clock();
     scene.buildKDtree(MAX_KD_DEPTH, MAX_KD_LEAF, KD_PARTS);

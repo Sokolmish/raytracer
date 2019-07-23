@@ -1,3 +1,3 @@
-<img src="./Images/image3.bmp">
-<img src="./Images/image2.bmp">
-<img src="./Images/image1.bmp">
+<img src="./Images/Image3.bmp">
+<img src="./Images/Image2.bmp">
+<img src="./Images/Image1.bmp">
