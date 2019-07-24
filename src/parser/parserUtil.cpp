@@ -28,11 +28,13 @@ int scanWhole(strIter &it, const strIter &end) {
 
 float scanFractPart(strIter &it, const strIter &end) {
     float res = 0.f;
+    float mul = 0.1f;
     while (it != end && isDigit(*it)) {
-        res = res * 0.1f + (*it - '0');
+        res = res + (*it - '0') * mul;
+        mul *= 0.1;
         it++;
     }
-    return res * 0.1f;
+    return res;
 }
 
 int scanInt(strIter &it, const strIter &end) {
