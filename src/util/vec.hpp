@@ -5,21 +5,22 @@
 #include <cmath>
 #include <cassert>
 #include <initializer_list>
+#include <iostream>
 
 template <typename T, int dim>
 struct Vec {
     T data[dim];
-    //Constructors
+    // Constructors
     Vec() {
         std::memset(data, 0, dim);
     }
-    Vec(const std::initializer_list<T> &l) { //...
+    Vec(const std::initializer_list<T> &l) { // ...
         assert(l.size == dim);
         int index = 0;
         for (auto&& e : l)
             operator[] (index++) = e;
     }
-    //Indexation
+    // Indexation
     T& operator[] (int index) {
         assert(index < dim && index >= 0);
         return data[index];
@@ -28,7 +29,7 @@ struct Vec {
         assert(index < dim && index >= 0);
         return data[index];
     }
-    //Length and normalization
+    // Length and normalization
     float length() const {
         T t = 0;
         for (int i = 0; i < dim; i++)
@@ -38,7 +39,7 @@ struct Vec {
     Vec<T, dim> normalize() const {
         return (*this) / length();
     }
-    //Compound assigment
+    // Compound assigment
     Vec<T, dim> operator+= (const Vec<T, dim> &rhs) {
         for (int i = 0; i < dim; i++)
             this->data[i] += rhs.data[i];
@@ -47,16 +48,24 @@ struct Vec {
         for (int i = 0; i < dim; i++)
             this->data[i] -= rhs.data[i];
     }
+    Vec<T, dim> operator*= (const T &rhs) {
+        for (int i = 0; i < dim; i++)
+            this->data[i] *= rhs;
+    }
+    Vec<T, dim> operator/= (const T &rhs) {
+        for (int i = 0; i < dim; i++)
+            this->data[i] /= rhs;
+    }
 };
 
 template <typename T>
 struct Vec<T, 2> {
     T x, y;
-    //Constructors
+    // Constructors
     Vec() {
         x = y = 0;
     }
-    Vec(const std::initializer_list<T> &l) { //...
+    Vec(const std::initializer_list<T> &l) { // ...
         assert(l.size == 3);
         int index = 0;
         for (auto&& e : l)
@@ -66,29 +75,29 @@ struct Vec<T, 2> {
         this->x = x;
         this->y = y;
     }
-    //Indexation
+    // Indexation
     T& operator[] (int index) {
         assert(index < 2 && index >= 0);
         if (index == 0)
             return x;
-        else //index == 1
+        else // index == 1
             return y;
     }
     const T& operator[] (int index) const {
         assert(index < 2 && index >= 0);
         if (index == 0)
             return x;
-        else //index == 1
+        else // index == 1
             return y;
     }
-    //Length and normalization
+    // Length and normalization
     float length() const {
         return sqrtf(x * x + y * y);
     }
     Vec<T, 2> normalize() const {
         return (*this) / length();
     }
-    //Compound assigment
+    // Compound assigment
     Vec<T, 2> operator+= (const Vec<T, 2> &rhs) {
         x += rhs.x;
         y += rhs.y;
@@ -97,16 +106,24 @@ struct Vec<T, 2> {
         x -= rhs.x;
         y -= rhs.y;
     }
+    Vec<T, 2> operator*= (const T &rhs) {
+        x *= rhs;
+        y *= rhs;
+    }
+    Vec<T, 2> operator/= (const T &rhs) {
+        x /= rhs;
+        y /= rhs;
+    }
 };
 
 template <typename T>
 struct Vec<T, 3> {
     T x, y, z;
-    //Constructors
+    // Constructors
     Vec() {
         x = y = z = 0;
     }
-    Vec(const std::initializer_list<T> &l) { //...
+    Vec(const std::initializer_list<T> &l) { // ...
         assert(l.size == 3);
         int index = 0;
         for (auto&& e : l)
@@ -117,14 +134,14 @@ struct Vec<T, 3> {
         this->y = y;
         this->z = z;
     }
-    //Indexation
+    // Indexation
     T& operator[] (int index) {
         assert(index < 3 && index >= 0);
         if (index == 0)
             return x;
         else if (index == 1)
             return y;
-        else //index == 2
+        else // index == 2
             return z;
     }
     const T& operator[] (int index) const {
@@ -133,17 +150,17 @@ struct Vec<T, 3> {
             return x;
         else if (index == 1)
             return y;
-        else //index == 2
+        else // index == 2
             return z;
     }
-    //Length and normalization
+    // Length and normalization
     float length() const {
         return sqrtf(x * x + y * y + z * z);
     }
     Vec<T, 3> normalize() const {
         return (*this) / length();
     }
-    //Cross product
+    // Cross product
     Vec<T, 3> operator^ (const Vec<T, 3> &rhs) const {
         return Vec<T, 3>(
             y * rhs.z - z * rhs.y,
@@ -151,27 +168,43 @@ struct Vec<T, 3> {
             x * rhs.y - y * rhs.x
         );
     }
-    //Compound assigment
+    // Compound assigment
     Vec<T, 3> operator+= (const Vec<T, 3> &rhs) {
         x += rhs.x;
         y += rhs.y;
         z += rhs.z;
+		return *this;
     }
     Vec<T, 3> operator-= (const Vec<T, 3> &rhs) {
         x -= rhs.x;
         y -= rhs.y;
         z -= rhs.z;
+		return *this;
     }
+    Vec<T, 3> operator*= (const T &rhs) {
+        x *= rhs;
+        y *= rhs;
+        z *= rhs;
+    }
+    Vec<T, 3> operator/= (const T &rhs) {
+        x /= rhs;
+        y /= rhs;
+        z /= rhs;
+    }
+    // Components
+    T r() const { return x; }
+    T g() const { return y; }
+    T b() const { return z; }
 };
 
 template <typename T>
 struct Vec<T, 4> {
     T x, y, z, w;
-    //Constructors
+    // Constructors
     Vec() {
         x = y = z = w = 0;
     }
-    Vec(const std::initializer_list<T> &l) { //...
+    Vec(const std::initializer_list<T> &l) { // ...
         assert(l.size == 3);
         int index = 0;
         for (auto&& e : l)
@@ -183,7 +216,7 @@ struct Vec<T, 4> {
         this->z = z;
         this->w = w;
     }
-    //Indexation
+    // Indexation
     T& operator[] (int index) {
         assert(index < 4 && index >= 0);
         if (index == 0)
@@ -192,7 +225,7 @@ struct Vec<T, 4> {
             return y;
         else if (index == 2)
             return z;
-        else //index == 3
+        else // index == 3
             return w;
     }
     const T& operator[] (int index) const {
@@ -203,17 +236,17 @@ struct Vec<T, 4> {
             return y;
         else if (index == 2)
             return z;
-        else //index == 3
+        else // index == 3
             return w;
     }
-    //Length and normalization
+    // Length and normalization
     float length() const {
         return sqrtf(x * x + y * y + z * z + w * w);
     }
     Vec<T, 4> normalize() const {
         return (*this) / length();
     }
-    //Compound assigment
+    // Compound assigment
     Vec<T, 4> operator+= (const Vec<T, 4> &rhs) {
         x += rhs.x;
         y += rhs.y;
@@ -226,9 +259,26 @@ struct Vec<T, 4> {
         z -= rhs.z;
         w += rhs.w;
     }
+    Vec<T, 4> operator*= (const T &rhs) {
+        x *= rhs;
+        y *= rhs;
+        z *= rhs;
+        w *= rhs;
+    }
+    Vec<T, 4> operator/= (const T &rhs) {
+        x /= rhs;
+        y /= rhs;
+        z /= rhs;
+        w /= rhs;
+    }
+    // Components
+    T r() const { return x; }
+    T g() const { return y; }
+    T b() const { return z; }
+    T a() const { return w; }
 };
 
-//Addition and Subtraction
+// Addition and Subtraction
 template <typename T, int dim>
 Vec<T, dim> operator+ (const Vec<T, dim> &lhs, const Vec<T, dim> &rhs) {
     Vec<T, dim> t;
@@ -250,7 +300,7 @@ Vec<T, dim> operator- (const Vec<T, dim> &rhs) {
     return Vec<T, dim>(rhs) * (T) (-1);
 }
 
-//Muliply and division by number
+// Muliply and division by number
 template <typename T, int dim>
 Vec<T, dim> operator* (const Vec<T, dim> &lhs, const T &rhs) {
     Vec<T, dim> t = Vec<T, dim>(lhs);
@@ -280,7 +330,7 @@ Vec<T, dim> operator/ (const T &lhs, const Vec<T, dim> &rhs) {
     return t;
 }
 
-//Dot product
+// Dot product
 template <typename T, int dim>
 T operator* (const Vec<T, dim> &lhs, const Vec<T, dim> &rhs) {
     T t = 0;
@@ -289,7 +339,7 @@ T operator* (const Vec<T, dim> &lhs, const Vec<T, dim> &rhs) {
     return t;
 }
 
-//Multiplication
+// Multiplication
 template <typename T, int dim>
 Vec<T, dim> multiply(const Vec<T, dim> &lhs, const Vec<T, dim> &rhs) {
     Vec<T, dim> t(lhs);
@@ -298,7 +348,18 @@ Vec<T, dim> multiply(const Vec<T, dim> &lhs, const Vec<T, dim> &rhs) {
     return t;
 }
 
-//Definitions
+// Print
+template <typename T, int dim>
+std::ostream& operator<< (std::ostream &os, const Vec<T, dim> &vec) {
+    os << "(" << vec[0];
+    for (int i = 1; i < dim; i++) {
+        os << ", " << vec[i];
+    }
+    os << ")";
+    return os;
+}
+
+// Definitions
 
 typedef Vec<int, 2> Vec2i;
 typedef Vec<float, 2> Vec2f;

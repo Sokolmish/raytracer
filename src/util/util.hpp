@@ -65,4 +65,17 @@ struct Material {
 #define MAT_ROT_Z(phi) Mat3f { cosf(phi), -sinf(phi), 0, sinf(phi), cosf(phi), 0, 0, 0, 1 }
 #define MAT_SCALE(x, y, z) Mat3f { x, 0, 0, 0, y, 0, 0, 0, z }
 
+// #define MAT3_ID Mat3f { 1, 0, 0, 0, 1, 0, 0, 0, 1 }
+// #define MAT3_ROT_X(phi) Mat3f { 1, 0, 0, 0, cosf(phi), -sinf(phi), 0, sinf(phi), cosf(phi) }
+// #define MAT3_ROT_Y(phi) Mat3f { cosf(phi), 0, sinf(phi), 0, 1, 0, -sinf(phi), 0, cosf(phi) }
+// #define MAT3_ROT_Z(phi) Mat3f { cosf(phi), -sinf(phi), 0, sinf(phi), cosf(phi), 0, 0, 0, 1 }
+// #define MAT3_SCALE(x, y, z) Mat3f { x, 0, 0, 0, y, 0, 0, 0, z }
+
+#define MAT2_ID Mat2f { 1, 0, 0, 1 }
+#define MAT2_ROT(phi) Mat2f { cosf(phi), -sinf(phi), sinf(phi), cosf(phi) }
+#define MAT2_SCALE(x, y) Mat2f { x, 0, y, 0 }
+
+#define VEC2_DESTR(vec) (vec).x, (vec).y
+#define VEC3_DESTR(vec) (vec).x, (vec).y (vec).z
+
 #endif
